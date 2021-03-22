@@ -2,13 +2,6 @@ package socialmedia;
 
 import java.io.IOException;
 
-/**
- * BadSocialMedia is a minimally compiling, but non-functioning implementor of
- * the SocialMediaPlatform interface.
- *
- * @author Diogo Pacheco
- * @version 1.0
- */
 public class SocialMedia implements SocialMediaPlatform {
 
     @Override
