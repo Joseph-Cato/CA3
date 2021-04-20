@@ -3,11 +3,15 @@ package socialmedia;
 import org.junit.Assert;
 import org.junit.Test;
 
+import org.hamcrest.core.IsEqual;
+
 import java.util.HashMap;
 
 public class SocialMediaTest {
 
-    // Account Method Tests
+    /*
+    -----------------Account Method Tests-----------------
+     */
 
     @Test
     public void createAccountTest() {
@@ -63,6 +67,8 @@ public class SocialMediaTest {
 
         SocialMedia sm = new SocialMedia();
 
+        Account.resetNumberOfAccounts();
+
         try {
             sm.createAccount("Jimmy", "Jimmy is super cool");
             sm.createAccount("Billy_Bobby");
@@ -76,10 +82,12 @@ public class SocialMediaTest {
             e.printStackTrace();
         }
 
+        Account.resetNumberOfAccounts();
+
         HashMap<String, Account> testMap = new HashMap<>();
 
         testMap.put("Jimmy", new Account("Jimmy", "Jimmy is super cool"));
-        testMap.put("Billy_Bobby", new Account("Jessica", "Not as cool as Jimmy :("));
+        testMap.put("Jessica", new Account("Jessica", "Not as cool as Jimmy :("));
 
         HashMap<String, String> accountList = new HashMap<>();
 
@@ -128,7 +136,7 @@ public class SocialMediaTest {
         SocialMedia sm = new SocialMedia();
 
         SocialMedia finalSm = sm;
-        Assert.assertThrows(AccountIDNotRecognisedException.class, () -> finalSm.removeAccount("Dave"));
+        Assert.assertThrows(HandleNotRecognisedException.class, () -> finalSm.removeAccount("Dave"));
 
         sm = new SocialMedia();
 
@@ -139,15 +147,106 @@ public class SocialMediaTest {
         }
 
         SocialMedia finalSm1 = sm;
-        Assert.assertThrows(AccountIDNotRecognisedException.class, () -> finalSm1.removeAccount(" "));
+        Assert.assertThrows(HandleNotRecognisedException.class, () -> finalSm1.removeAccount(" "));
 
         SocialMedia finalSm2 = sm;
-        Assert.assertThrows(AccountIDNotRecognisedException.class, () -> finalSm2.removeAccount("asefokiluhbv3124 "));
+        Assert.assertThrows(HandleNotRecognisedException.class, () -> finalSm2.removeAccount("asefokiluhbv3124 "));
 
         SocialMedia finalSm3 = sm;
-        Assert.assertThrows(AccountIDNotRecognisedException.class, () -> finalSm3.removeAccount(""));
+        Assert.assertThrows(HandleNotRecognisedException.class, () -> finalSm3.removeAccount(""));
 
         SocialMedia finalSm4 = sm;
-        Assert.assertThrows(AccountIDNotRecognisedException.class, () -> finalSm4.removeAccount(" Jimboo!!"));
+        Assert.assertThrows(HandleNotRecognisedException.class, () -> finalSm4.removeAccount(" Jimboo!!"));
     }
+
+    @Test
+    public void changeAccountHandleTest() {
+
+        SocialMedia sm = new SocialMedia();
+
+        try {
+            sm.createAccount("Jimmy", "Jimmy is super cool");
+            sm.createAccount("Billy_Bobby");
+            sm.createAccount("Jessica", "Not as cool as Jimmy :(");
+
+            sm.changeAccountHandle("Jessica", "James");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Account.resetNumberOfAccounts();
+
+        HashMap<String, Account> testMap = new HashMap<>();
+
+        testMap.put("Jimmy", new Account("Jimmy", "Jimmy is super cool"));
+        testMap.put("Billy_Bobby", new Account("Billy_Bobby", ""));
+        testMap.put("James", new Account("James", "Not as cool as Jimmy :("));
+
+        HashMap<String, String> accountList = new HashMap<>();
+
+        testMap.forEach( (k,v) -> accountList.put(k, v.getDescription()));
+
+        HashMap<String, String> actualHashMap = sm.tempPlatform.printAccounts();
+
+        Assert.assertEquals(testMap.size(), actualHashMap.size());
+
+        Assert.assertTrue(actualHashMap.containsKey("Jimmy"));
+        Assert.assertEquals(accountList.get("Jimmy"), actualHashMap.get("Jimmy"));
+
+        Assert.assertTrue(actualHashMap.containsKey("Billy_Bobby"));
+        Assert.assertEquals(accountList.get("Billy_Bobby"), actualHashMap.get("Billy_Bobby"));
+
+        Assert.assertTrue(actualHashMap.containsKey("James"));
+        Assert.assertEquals(accountList.get("James"), actualHashMap.get("James"));
+
+    }
+
+    @Test
+    public void changeAccountHandleBadOldHandleTest() {
+
+        SocialMedia sm = new SocialMedia();
+
+        try {
+            sm.createAccount("Jimmy", "Jimmy is super cool");
+            sm.createAccount("Billy_Bobby");
+            sm.createAccount("Jessica", "Not as cool as Jimmy :(");
+
+            sm.changeAccountHandle("Jessica", "James");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        Assert.assertThrows(HandleNotRecognisedException.class, () -> sm.changeAccountHandle(" ", "Billy"));
+        Assert.assertThrows(HandleNotRecognisedException.class, () -> sm.changeAccountHandle("J1mmy", "Billy"));
+        Assert.assertThrows(HandleNotRecognisedException.class, () -> sm.changeAccountHandle("1233123sidugyvcfiahgvlkjhasebdvgfiuy34g913746fgoqu3hgbfljhsbfopiu7uw3ytt0987aepu;ygefo87ewsrabto872q3t987q23tp;", "Billy"));
+
+    }
+
+    @Test
+    public void changeAccountHandleBadNewHandleTest() {
+
+        SocialMedia sm = new SocialMedia();
+
+        try {
+            sm.createAccount("Jimmy", "Jimmy is super cool");
+            sm.createAccount("Billy_Bobby");
+            sm.createAccount("Jessica", "Not as cool as Jimmy :(");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Assert.assertThrows(IllegalHandleException.class, () -> sm.changeAccountHandle("Jimmy", "Jessica"));
+        Assert.assertThrows(IllegalHandleException.class, () -> sm.changeAccountHandle("Billy_Bobby", "Jimmy"));
+        Assert.assertThrows(IllegalHandleException.class, () -> sm.changeAccountHandle("Jessica", "Jimmy"));
+
+        Assert.assertThrows(InvalidHandleException.class, () -> sm.changeAccountHandle("Jimmy", "white space"));
+        Assert.assertThrows(InvalidHandleException.class, () -> sm.changeAccountHandle("Jimmy", "too_longggggggggggggggggggggggg"));
+        Assert.assertThrows(InvalidHandleException.class, () -> sm.changeAccountHandle("Jimmy", "both too_longggg ggggggggggggggggggg"));
+
+    }
+
+
+
 }

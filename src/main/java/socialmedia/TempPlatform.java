@@ -12,8 +12,8 @@ public class TempPlatform {
         accounts.put(handle, account);
     }
 
-    void removeAccount(String handle) {
-        accounts.remove(handle);
+    Account removeAccount(String handle) {
+        return accounts.remove(handle);
     }
 
     Account getAccount(String handle) {

@@ -2,7 +2,7 @@ package socialmedia;
 
 public class Account {
 
-    public static int numberOfAccounts;
+    private static int numberOfAccounts = 0;
 
     private final int NUMERICAL_IDENTIFIER;
 
@@ -23,7 +23,7 @@ public class Account {
 
         this.description = description;
 
-        numberOfAccounts =+ 1;
+        numberOfAccounts += 1;
 
         NUMERICAL_IDENTIFIER = numberOfAccounts;
     }
@@ -38,5 +38,13 @@ public class Account {
 
     public String getDescription() {
         return description;
+    }
+
+    public static void resetNumberOfAccounts() {
+        numberOfAccounts = 0;
+    }
+
+    public void setHandle(String handle) {
+        this.handle = handle;
     }
 }
