@@ -1,30 +1,64 @@
 package socialmedia;
 
 import java.io.IOException;
+import java.nio.channels.ScatteringByteChannel;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SocialMedia implements SocialMediaPlatform {
 
+    public TempPlatform tempPlatform = new TempPlatform();
+
     @Override
     public int createAccount(String handle) throws IllegalHandleException, InvalidHandleException {
-        // TODO Auto-generated method stub
-        return 0;
+
+        // Calls other method with blanc description string
+        return createAccount(handle, "");
     }
 
     @Override
     public int createAccount(String handle, String description) throws IllegalHandleException, InvalidHandleException {
-        // TODO Auto-generated method stub
-        return 0;
+
+        // Checks if handle is valid
+        if (handle.equals("") || handle.length() > 30 || handle.contains(" ")) throw new InvalidHandleException();
+
+        // Checks if handle already exists in platform
+        if (tempPlatform.getAccount(handle) != null) throw new IllegalHandleException();
+
+        //Creates new account
+        Account newAccount = new Account(handle, description);
+
+        // Adds account to platform
+        tempPlatform.addAccount(handle, newAccount);
+
+        return newAccount.getNUMERICAL_IDENTIFIER();
     }
 
     @Override
     public void removeAccount(int id) throws AccountIDNotRecognisedException {
-        // TODO Auto-generated method stub
+        // TODO Remove all types of posts associated with this account
+
+        AtomicReference<String> handle = null;
+
+        // Finds the unique handle associated with this id
+        tempPlatform.getAccounts().forEach( (k,v) -> {
+            if (v.getNUMERICAL_IDENTIFIER() == id) {
+                handle.set(k);
+            }
+        });
+
+        try {
+            removeAccount(handle.toString());
+        } catch (HandleNotRecognisedException e) {
+            e.printStackTrace();
+        }
 
     }
 
     @Override
     public void removeAccount(String handle) throws HandleNotRecognisedException {
-        // TODO Auto-generated method stub
+        // TODO Remove all types of posts associated with this account
+
+        tempPlatform.removeAccount(handle);
 
     }
 
