@@ -125,34 +125,60 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public int createPost(String handle, String message) throws HandleNotRecognisedException, InvalidPostException {
-        // TODO Auto-generated method stub
-        return 0;
+        if (tempPlatform.getAccount(handle) == null) throw new HandleNotRecognisedException();
+        if (message.length() == 0 || message.length() > 100) throw new InvalidPostException();
+
+        Original newOriginal = new Original(handle, message, tempPlatform);
+        tempPlatform.addPost(newOriginal.uniqueID, newOriginal);
+        tempPlatform.setCurrentPostID(tempPlatform.getCurrentPostID()+1);
+        return newOriginal.getUniqueID();
     }
 
     @Override
     public int endorsePost(String handle, int id)
             throws HandleNotRecognisedException, PostIDNotRecognisedException, NotActionablePostException {
-        // TODO Auto-generated method stub
-        return 0;
-    }
+        if (tempPlatform.getAccount(handle) == null) throw new HandleNotRecognisedException();
+        if (tempPlatform.getPost(id) == null) throw new PostIDNotRecognisedException();
+        if (tempPlatform.checkIfEndorsement(id) == false) throw new NotActionablePostException();
+        if (tempPlatform.checkIfEmptyPost(id) == false) throw new NotActionablePostException();
 
+        Endorsement newEndorsement = new Endorsement(handle, id, tempPlatform);
+        tempPlatform.addPost(newEndorsement.uniqueID, newEndorsement);
+        tempPlatform.setCurrentPostID(tempPlatform.getCurrentPostID()+1);
+        return newEndorsement.getUniqueID();
+    }
+// TODO explain why endorsed posts can't be commented on (contradictions)
     @Override
     public int commentPost(String handle, int id, String message) throws HandleNotRecognisedException,
             PostIDNotRecognisedException, NotActionablePostException, InvalidPostException {
-        // TODO Auto-generated method stub
-        return 0;
+        if (tempPlatform.getAccount(handle) == null) throw new HandleNotRecognisedException();
+        if (tempPlatform.getPost(id) == null) throw new PostIDNotRecognisedException();
+        if (tempPlatform.checkIfEmptyPost(id) == false) throw new NotActionablePostException();
+        if (message.length() == 0 || message.length() > 100) throw new InvalidPostException();
+
+        Comment newComment = new Comment(handle, id, message, tempPlatform);
+        tempPlatform.addPost(newComment.uniqueID, newComment);
+        tempPlatform.setCurrentPostID(tempPlatform.getCurrentPostID()+1);
+        return newComment.getUniqueID();
     }
 
     @Override
     public void deletePost(int id) throws PostIDNotRecognisedException {
-        // TODO Auto-generated method stub
-
+        if (tempPlatform.getPost(id) == null) throw new PostIDNotRecognisedException();
+        Post postToBeDeleted = tempPlatform.getPost(id);
+        Post.deletePost(postToBeDeleted, tempPlatform);
     }
 
     @Override
     public String showIndividualPost(int id) throws PostIDNotRecognisedException {
-        // TODO Auto-generated method stub
-        return null;
+        if (tempPlatform.getPost(id) == null) throw new PostIDNotRecognisedException();
+        Post post = tempPlatform.getPost(id);
+        String stat = "ID: " + post.getUniqueID() + "\n" +
+                "Account: " + post.getPosterHandle() + "\n" +
+                "No. endorsements: " + post.getEndorsements().size() +
+                "No. comments: " + post.getComments().size() + "\n" +
+                post.getMessage();
+        return stat;
     }
 
     @Override
@@ -170,26 +196,50 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public int getTotalOriginalPosts() {
-        // TODO Auto-generated method stub
-        return 0;
+        int noOfOriginals = 0;
+        for (Post post : tempPlatform.getPosts().values()) {
+            if (post.getClass() == Original.class) {
+                noOfOriginals += 1;
+            }
+        }
+        return noOfOriginals;
     }
 
     @Override
     public int getTotalEndorsmentPosts() {
-        // TODO Auto-generated method stub
-        return 0;
+        int noOfEndorsements = 0;
+        for (Post post : tempPlatform.getPosts().values()) {
+            if (post.getClass() == Endorsement.class) {
+                noOfEndorsements += 1;
+            }
+        }
+        return noOfEndorsements;
     }
 
     @Override
     public int getTotalCommentPosts() {
-        // TODO Auto-generated method stub
-        return 0;
+        int noOfComments = 0;
+        for (Post post : tempPlatform.getPosts().values()) {
+            if (post.getClass() == Comment.class) {
+                noOfComments += 1;
+            }
+        }
+        return noOfComments;
     }
 
     @Override
     public int getMostEndorsedPost() {
-        // TODO Auto-generated method stub
-        return 0;
+        int noOfEndorsements = -1;
+        Post mostEndorsedPost = null;
+        for (Post post : tempPlatform.getPosts().values()) {
+            if (post.getEndorsements() != null); {
+                if (post.getEndorsements().size() > noOfEndorsements) {
+                    noOfEndorsements = post.getEndorsements().size();
+                    mostEndorsedPost = post;
+                }
+            }
+        }
+        return mostEndorsedPost.getUniqueID();
     }
 
     @Override
