@@ -4,46 +4,122 @@ import java.io.IOException;
 
 public class SocialMedia implements SocialMediaPlatform {
 
+    public TempPlatform tempPlatform = new TempPlatform();
+
     @Override
     public int createAccount(String handle) throws IllegalHandleException, InvalidHandleException {
-        // TODO Auto-generated method stub
-        return 0;
+
+        // Calls other method with blanc description string
+        return createAccount(handle, "");
     }
 
     @Override
     public int createAccount(String handle, String description) throws IllegalHandleException, InvalidHandleException {
-        // TODO Auto-generated method stub
-        return 0;
+
+        // Checks if handle is valid
+        if (handle.equals("") || handle.length() > 30 || handle.contains(" ")) throw new InvalidHandleException();
+
+        // Checks if handle already exists in platform
+        if (tempPlatform.getAccount(handle) != null) throw new IllegalHandleException();
+
+        //Creates new account
+        Account newAccount = new Account(handle, description);
+
+        // Adds account to platform
+        tempPlatform.addAccount(handle, newAccount);
+
+        // Returns the id of the created account
+        return newAccount.getNUMERICAL_IDENTIFIER();
+
     }
 
     @Override
     public void removeAccount(int id) throws AccountIDNotRecognisedException {
-        // TODO Auto-generated method stub
+
+        // TODO Remove all types of posts associated with this account
+
+        // Finds the account with the corresponding Id
+        for (Account i : tempPlatform.getAccounts().values()) {
+            if (i.getNUMERICAL_IDENTIFIER() == id) {
+                try {
+                    // Removes that account using the other method
+                    removeAccount(i.getHandle());
+                    // Returns void if this if is evaluated as true (i.e the id is found)
+                    return;
+                } catch (HandleNotRecognisedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        // If the if statement above was never evaluated as true this exception will be thrown
+        throw new  AccountIDNotRecognisedException();
 
     }
 
     @Override
     public void removeAccount(String handle) throws HandleNotRecognisedException {
-        // TODO Auto-generated method stub
+
+        // TODO Remove all types of posts associated with this account
+
+        // Removes account from the HashMap accounts
+        Account account = tempPlatform.removeAccount(handle);
+
+        // if HashMap.removeAccount() returns null then the value was not found
+        // (no account with that handle exists)
+        if (account == null) throw new HandleNotRecognisedException();
 
     }
 
     @Override
     public void changeAccountHandle(String oldHandle, String newHandle)
             throws HandleNotRecognisedException, IllegalHandleException, InvalidHandleException {
-        // TODO Auto-generated method stub
+
+        // Checks if old handle exists in system
+        Account account = tempPlatform.getAccount(oldHandle);
+        if (account == null) throw new HandleNotRecognisedException();
+
+        // Checks if new handle already exists in system
+        Account account1 = tempPlatform.getAccount(newHandle);
+        if (account1 != null) throw new IllegalHandleException();
+
+        // Checks if the new handle is valid
+        if (newHandle.equals("") || newHandle.length() > 30 || newHandle.contains(" ")) throw new InvalidHandleException();
+
+        // Removes old data from system
+        tempPlatform.removeAccount(oldHandle);
+
+        // Changes handle of old account
+        account.setHandle(newHandle);
+
+        // Adds new account and handle to system
+        tempPlatform.addAccount(newHandle, account);
 
     }
 
     @Override
     public void updateAccountDescription(String handle, String description) throws HandleNotRecognisedException {
-        // TODO Auto-generated method stub
+
+        // Gets account from system, throws exception if user is not found.
+        Account account = tempPlatform.getAccount(handle);
+        if (account == null) throw new HandleNotRecognisedException();
+
+        // Removes account from system
+        tempPlatform.removeAccount(handle);
+
+        // Changes description of account
+        account.setDescription(description);
+
+        // Add account back into system
+        tempPlatform.addAccount(handle, account);
 
     }
 
     @Override
     public String showAccount(String handle) throws HandleNotRecognisedException {
-        // TODO Auto-generated method stub
+
+        // TODO - create when basic post framework is in
+
         return null;
     }
 
