@@ -1,8 +1,6 @@
 package socialmedia;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class TempPlatform {
 
@@ -24,6 +22,10 @@ public class TempPlatform {
         return accounts;
     }
 
+    /**
+     *  Method used solely for testing.
+     * @return HashMap of account handles and descriptions in the system.
+     */
     HashMap<String, String> printAccounts(){
 
         HashMap<String, String> accountList = new HashMap<>();

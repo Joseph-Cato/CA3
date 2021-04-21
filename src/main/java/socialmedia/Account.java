@@ -40,6 +40,10 @@ public class Account {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public static void resetNumberOfAccounts() {
         numberOfAccounts = 0;
     }

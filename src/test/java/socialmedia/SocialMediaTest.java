@@ -3,8 +3,6 @@ package socialmedia;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.hamcrest.core.IsEqual;
-
 import java.util.HashMap;
 
 public class SocialMediaTest {
@@ -65,6 +63,8 @@ public class SocialMediaTest {
     @Test
     public void removeAccountTest() {
 
+        //TODO - check posts are removed
+
         SocialMedia sm = new SocialMedia();
 
         Account.resetNumberOfAccounts();
@@ -100,6 +100,8 @@ public class SocialMediaTest {
     @Test
     public void removeAccountBadIdTest() {
 
+        //TODO - check posts remain intact
+
         SocialMedia sm = new SocialMedia();
 
         SocialMedia finalSm1 = sm;
@@ -133,6 +135,8 @@ public class SocialMediaTest {
     @Test
     public void removeAccountBadHandleTest() {
 
+        //TODO - check posts remain intact
+
         SocialMedia sm = new SocialMedia();
 
         SocialMedia finalSm = sm;
@@ -157,6 +161,7 @@ public class SocialMediaTest {
 
         SocialMedia finalSm4 = sm;
         Assert.assertThrows(HandleNotRecognisedException.class, () -> finalSm4.removeAccount(" Jimboo!!"));
+
     }
 
     @Test
@@ -247,6 +252,70 @@ public class SocialMediaTest {
 
     }
 
+    @Test
+    public void updateAccountDescriptionTest() {
 
+        SocialMedia sm = new SocialMedia();
+
+        try {
+            sm.createAccount("Jimmy", "Jimmy is super cool");
+            sm.createAccount("Billy_Bobby");
+            sm.createAccount("Jessica", "Not as cool as Jimmy :(");
+
+            sm.updateAccountDescription("Billy_Bobby", "Proud to announce my name is Billy Bobby!");
+            sm.updateAccountDescription("Jimmy", "Still cool but wouldn't say 'super cool' ://");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Account.resetNumberOfAccounts();
+
+        HashMap<String, Account> testMap = new HashMap<>();
+
+        testMap.put("Jimmy", new Account("Jimmy", "Still cool but wouldn't say 'super cool' ://"));
+        testMap.put("Billy_Bobby", new Account("Billy_Bobby", "Proud to announce my name is Billy Bobby!"));
+        testMap.put("James", new Account("James", "Not as cool as Jimmy :("));
+
+        HashMap<String, String> accountList = new HashMap<>();
+
+        testMap.forEach( (k,v) -> accountList.put(k, v.getDescription()));
+
+        HashMap<String, String> actualHashMap = sm.tempPlatform.printAccounts();
+
+        Assert.assertEquals(testMap.size(), actualHashMap.size());
+
+        Assert.assertTrue(actualHashMap.containsKey("Jimmy"));
+        Assert.assertEquals(accountList.get("Jimmy"), actualHashMap.get("Jimmy"));
+
+        Assert.assertTrue(actualHashMap.containsKey("Billy_Bobby"));
+        Assert.assertEquals(accountList.get("Billy_Bobby"), actualHashMap.get("Billy_Bobby"));
+
+        Assert.assertTrue(actualHashMap.containsKey("Jessica"));
+        Assert.assertEquals(accountList.get("Jessica"), actualHashMap.get("James"));
+
+    }
+
+    @Test
+    public void updateAccountDescriptionBadHandleTest() {
+
+        SocialMedia sm = new SocialMedia();
+
+        try {
+            sm.createAccount("Jim", "I'm Jim");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Assert.assertThrows(HandleNotRecognisedException.class, () -> sm.updateAccountDescription("Timothy", "Not working!"));
+        Assert.assertThrows(HandleNotRecognisedException.class, () -> sm.updateAccountDescription("Jim ", "Not working!"));
+
+    }
+
+    @Test
+    public void showAccountTest() {
+
+        // TODO - create when basic post framework is in
+
+    }
 
 }

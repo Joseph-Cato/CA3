@@ -1,11 +1,6 @@
 package socialmedia;
 
-import javax.swing.text.html.HTMLDocument;
 import java.io.IOException;
-import java.nio.channels.ScatteringByteChannel;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class SocialMedia implements SocialMediaPlatform {
 
@@ -33,11 +28,14 @@ public class SocialMedia implements SocialMediaPlatform {
         // Adds account to platform
         tempPlatform.addAccount(handle, newAccount);
 
+        // Returns the id of the created account
         return newAccount.getNUMERICAL_IDENTIFIER();
+
     }
 
     @Override
     public void removeAccount(int id) throws AccountIDNotRecognisedException {
+
         // TODO Remove all types of posts associated with this account
 
         // Finds the account with the corresponding Id
@@ -61,6 +59,7 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public void removeAccount(String handle) throws HandleNotRecognisedException {
+
         // TODO Remove all types of posts associated with this account
 
         // Removes account from the HashMap accounts
@@ -100,13 +99,27 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public void updateAccountDescription(String handle, String description) throws HandleNotRecognisedException {
-        // TODO Auto-generated method stub
+
+        // Gets account from system, throws exception if user is not found.
+        Account account = tempPlatform.getAccount(handle);
+        if (account == null) throw new HandleNotRecognisedException();
+
+        // Removes account from system
+        tempPlatform.removeAccount(handle);
+
+        // Changes description of account
+        account.setDescription(description);
+
+        // Add account back into system
+        tempPlatform.addAccount(handle, account);
 
     }
 
     @Override
     public String showAccount(String handle) throws HandleNotRecognisedException {
-        // TODO Auto-generated method stub
+
+        // TODO - create when basic post framework is in
+
         return null;
     }
 
