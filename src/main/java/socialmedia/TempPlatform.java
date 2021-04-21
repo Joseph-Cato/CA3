@@ -43,8 +43,14 @@ public class TempPlatform {
         return posts;
     }
 
-    boolean checkIfActionablePost (Integer id) {
-        if (posts.get(id).getClass() != Endorsement.class || posts.get(id).getClass() != EmptyPost.class ) {
+    boolean checkIfEndorsement (Integer id) {
+        if (posts.get(id).getClass() != Endorsement.class) {
+            return true;
+        } return false;
+    }
+
+    boolean checkIfEmptyPost (Integer id) {
+        if (posts.get(id).getClass() != EmptyPost.class ) {
             return true;
         } return false;
     }

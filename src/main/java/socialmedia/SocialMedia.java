@@ -65,7 +65,8 @@ public class SocialMedia implements SocialMediaPlatform {
             throws HandleNotRecognisedException, PostIDNotRecognisedException, NotActionablePostException {
         if (tempPlatform.getAccount(handle) == null) throw new HandleNotRecognisedException();
         if (tempPlatform.getPost(id) == null) throw new PostIDNotRecognisedException();
-        if (tempPlatform.checkIfActionablePost(id) == false) throw new NotActionablePostException();
+        if (tempPlatform.checkIfEndorsement(id) == false) throw new NotActionablePostException();
+        if (tempPlatform.checkIfEmptyPost(id) == false) throw new NotActionablePostException();
 
         Endorsement newEndorsement = new Endorsement(handle, id, tempPlatform);
         tempPlatform.addPost(newEndorsement.uniqueID, newEndorsement);
@@ -78,7 +79,7 @@ public class SocialMedia implements SocialMediaPlatform {
             PostIDNotRecognisedException, NotActionablePostException, InvalidPostException {
         if (tempPlatform.getAccount(handle) == null) throw new HandleNotRecognisedException();
         if (tempPlatform.getPost(id) == null) throw new PostIDNotRecognisedException();
-        if (tempPlatform.checkIfActionablePost(id) == false) throw new NotActionablePostException();
+        if (tempPlatform.checkIfEmptyPost(id) == false) throw new NotActionablePostException();
         if (message.length() == 0 || message.length() > 100) throw new InvalidPostException();
 
         Comment newComment = new Comment(handle, id, message, tempPlatform);

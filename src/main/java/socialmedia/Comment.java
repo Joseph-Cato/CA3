@@ -12,6 +12,9 @@ public class Comment extends Post {
         setUniqueID(tempPlatform);
         originalPoster = tempPlatform.getAccount(handle);
         original = tempPlatform.getPost(id);
+        if (original.getClass() == Endorsement.class) {
+            original = ((Endorsement) original).getOriginal();
+        }
         original.addComment(this);
     }
 
