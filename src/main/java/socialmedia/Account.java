@@ -10,11 +10,17 @@ public class Account {
 
     private String description;
 
-    /* //TODO Format these according to classes
-        private HashSet<Comment> comments = new HashSet<Comment>();
-        private HashSet<Original> originals = new HashSet<Original>();
-        private HashSet<Endorsement> endorsements = new HashSet<Endorsement>();
-    */
+
+
+
+/* //TODO Format these according to classes
+    private HashSet<Comment> comments = new HashSet<Comment>();
+
+    private HashSet<Original> originals = new HashSet<Original>();
+
+    private HashSet<Endorsement> endorsements = new HashSet<Endorsement>();
+*/
+
     public Account(String handle, String description){
 
         this.handle = handle;
@@ -49,4 +55,7 @@ public class Account {
     public void setHandle(String handle) {
         this.handle = handle;
     }
+
+
 }
+

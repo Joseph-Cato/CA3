@@ -3,6 +3,7 @@ package socialmedia;
 import java.util.HashMap;
 
 public class TempPlatform {
+
     private HashMap<String, Account> accounts = new HashMap<>();
     private HashMap<Integer, Post> posts = new HashMap<>();
     private int currentPostID;
@@ -38,6 +39,7 @@ public class TempPlatform {
     HashMap<String, Account> getAccounts() {
         return accounts;
     }
+
 
     public HashMap<Integer, Post> getPosts() {
         return posts;
