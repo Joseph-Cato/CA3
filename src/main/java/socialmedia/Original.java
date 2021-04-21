@@ -1,15 +1,13 @@
 package socialmedia;
 
-import java.util.HashMap;
-
 
 public class Original extends Post {
 
-    public Original(String handle, String message, TempPlatform tempPlatform) {
+    public Original(String handle, String message, Platform platform) {
         this.posterHandle = handle;
         this.message = message;
-        originalPoster = tempPlatform.getAccount(handle);
-        setUniqueID(tempPlatform);
+        originalPoster = platform.getAccount(handle);
+        setUniqueID(platform);
     }
 
 

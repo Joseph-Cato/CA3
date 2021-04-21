@@ -16,8 +16,8 @@ public class Post {
         return uniqueID;
     }
 
-    public void setUniqueID(TempPlatform tempPlatform) {
-        this.uniqueID = tempPlatform.getCurrentPostID()+1;
+    public void setUniqueID(Platform platform) {
+        this.uniqueID = platform.getCurrentPostID()+1;
     }
 
     public String getPosterHandle() {
@@ -48,16 +48,16 @@ public class Post {
         this.comments.put(comment.getUniqueID(), comment);
     }
 
-    public static void deletePost(Post post, TempPlatform tempPlatform) {
+    public static void deletePost(Post post, Platform platform) {
         if (post.endorsements != null) {
             for (Endorsement endorsement : post.endorsements.values()) {
-                tempPlatform.removePost(endorsement);
+                platform.removePost(endorsement);
             }
         }
 
         if (post.comments != null) {
             for (Comment comment : post.comments.values()) {
-                comment.setOriginal(new EmptyPost(tempPlatform));
+                comment.setOriginal(new EmptyPost(platform));
             }
         }
     }

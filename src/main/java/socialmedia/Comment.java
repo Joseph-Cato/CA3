@@ -1,17 +1,14 @@
 package socialmedia;
 
-import java.util.HashMap;
-import java.util.List;
-
 public class Comment extends Post {
     Post original;
 
-    public Comment(String handle, int id, String message, TempPlatform tempPlatform) {
+    public Comment(String handle, int id, String message, Platform platform) {
         this.posterHandle = handle;
         this.message = message;
-        setUniqueID(tempPlatform);
-        originalPoster = tempPlatform.getAccount(handle);
-        original = tempPlatform.getPost(id);
+        setUniqueID(platform);
+        originalPoster = platform.getAccount(handle);
+        original = platform.getPost(id);
         if (original.getClass() == Endorsement.class) {
             original = ((Endorsement) original).getOriginal();
         }

@@ -33,7 +33,7 @@ public class SocialMediaTest {
 
         testMap.forEach( (k,v) -> accountList.put(k, v.getDescription()));
 
-        Assert.assertEquals(accountList, sm.tempPlatform.printAccounts() );
+        Assert.assertEquals(accountList, sm.platform.printAccounts() );
 
     }
 
@@ -48,7 +48,7 @@ public class SocialMediaTest {
         Assert.assertThrows(InvalidHandleException.class, () -> sm.createAccount(" jimbo", ""));
         Assert.assertThrows(InvalidHandleException.class, () -> sm.createAccount("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", ""));
 
-        TempPlatform tp = new TempPlatform();
+        Platform tp = new Platform();
 
         try {
             sm.createAccount("jiles");
@@ -93,7 +93,7 @@ public class SocialMediaTest {
 
         testMap.forEach( (k,v) -> accountList.put(k, v.getDescription()));
 
-        Assert.assertEquals(accountList, sm.tempPlatform.printAccounts() );
+        Assert.assertEquals(accountList, sm.platform.printAccounts() );
 
     }
 
@@ -191,7 +191,7 @@ public class SocialMediaTest {
 
         testMap.forEach( (k,v) -> accountList.put(k, v.getDescription()));
 
-        HashMap<String, String> actualHashMap = sm.tempPlatform.printAccounts();
+        HashMap<String, String> actualHashMap = sm.platform.printAccounts();
 
         Assert.assertEquals(testMap.size(), actualHashMap.size());
 
@@ -280,7 +280,7 @@ public class SocialMediaTest {
 
         testMap.forEach( (k,v) -> accountList.put(k, v.getDescription()));
 
-        HashMap<String, String> actualHashMap = sm.tempPlatform.printAccounts();
+        HashMap<String, String> actualHashMap = sm.platform.printAccounts();
 
         Assert.assertEquals(testMap.size(), actualHashMap.size());
 

@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class SocialMedia implements SocialMediaPlatform {
 
-    public TempPlatform tempPlatform = new TempPlatform();
+    public Platform platform = new Platform();
 
     @Override
     public int createAccount(String handle) throws IllegalHandleException, InvalidHandleException {
@@ -20,13 +20,13 @@ public class SocialMedia implements SocialMediaPlatform {
         if (handle.equals("") || handle.length() > 30 || handle.contains(" ")) throw new InvalidHandleException();
 
         // Checks if handle already exists in platform
-        if (tempPlatform.getAccount(handle) != null) throw new IllegalHandleException();
+        if (platform.getAccount(handle) != null) throw new IllegalHandleException();
 
         //Creates new account
         Account newAccount = new Account(handle, description);
 
         // Adds account to platform
-        tempPlatform.addAccount(handle, newAccount);
+        platform.addAccount(handle, newAccount);
 
         // Returns the id of the created account
         return newAccount.getNUMERICAL_IDENTIFIER();
@@ -39,7 +39,7 @@ public class SocialMedia implements SocialMediaPlatform {
         // TODO Remove all types of posts associated with this account
 
         // Finds the account with the corresponding Id
-        for (Account i : tempPlatform.getAccounts().values()) {
+        for (Account i : platform.getAccounts().values()) {
             if (i.getNUMERICAL_IDENTIFIER() == id) {
                 try {
                     // Removes that account using the other method
@@ -63,7 +63,7 @@ public class SocialMedia implements SocialMediaPlatform {
         // TODO Remove all types of posts associated with this account
 
         // Removes account from the HashMap accounts
-        Account account = tempPlatform.removeAccount(handle);
+        Account account = platform.removeAccount(handle);
 
         // if HashMap.removeAccount() returns null then the value was not found
         // (no account with that handle exists)
@@ -76,24 +76,24 @@ public class SocialMedia implements SocialMediaPlatform {
             throws HandleNotRecognisedException, IllegalHandleException, InvalidHandleException {
 
         // Checks if old handle exists in system
-        Account account = tempPlatform.getAccount(oldHandle);
+        Account account = platform.getAccount(oldHandle);
         if (account == null) throw new HandleNotRecognisedException();
 
         // Checks if new handle already exists in system
-        Account account1 = tempPlatform.getAccount(newHandle);
+        Account account1 = platform.getAccount(newHandle);
         if (account1 != null) throw new IllegalHandleException();
 
         // Checks if the new handle is valid
         if (newHandle.equals("") || newHandle.length() > 30 || newHandle.contains(" ")) throw new InvalidHandleException();
 
         // Removes old data from system
-        tempPlatform.removeAccount(oldHandle);
+        platform.removeAccount(oldHandle);
 
         // Changes handle of old account
         account.setHandle(newHandle);
 
         // Adds new account and handle to system
-        tempPlatform.addAccount(newHandle, account);
+        platform.addAccount(newHandle, account);
 
     }
 
@@ -101,17 +101,17 @@ public class SocialMedia implements SocialMediaPlatform {
     public void updateAccountDescription(String handle, String description) throws HandleNotRecognisedException {
 
         // Gets account from system, throws exception if user is not found.
-        Account account = tempPlatform.getAccount(handle);
+        Account account = platform.getAccount(handle);
         if (account == null) throw new HandleNotRecognisedException();
 
         // Removes account from system
-        tempPlatform.removeAccount(handle);
+        platform.removeAccount(handle);
 
         // Changes description of account
         account.setDescription(description);
 
         // Add account back into system
-        tempPlatform.addAccount(handle, account);
+        platform.addAccount(handle, account);
 
     }
 
@@ -125,54 +125,54 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public int createPost(String handle, String message) throws HandleNotRecognisedException, InvalidPostException {
-        if (tempPlatform.getAccount(handle) == null) throw new HandleNotRecognisedException();
+        if (platform.getAccount(handle) == null) throw new HandleNotRecognisedException();
         if (message.length() == 0 || message.length() > 100) throw new InvalidPostException();
 
-        Original newOriginal = new Original(handle, message, tempPlatform);
-        tempPlatform.addPost(newOriginal.uniqueID, newOriginal);
-        tempPlatform.setCurrentPostID(tempPlatform.getCurrentPostID()+1);
+        Original newOriginal = new Original(handle, message, platform);
+        platform.addPost(newOriginal.uniqueID, newOriginal);
+        platform.setCurrentPostID(platform.getCurrentPostID()+1);
         return newOriginal.getUniqueID();
     }
 
     @Override
     public int endorsePost(String handle, int id)
             throws HandleNotRecognisedException, PostIDNotRecognisedException, NotActionablePostException {
-        if (tempPlatform.getAccount(handle) == null) throw new HandleNotRecognisedException();
-        if (tempPlatform.getPost(id) == null) throw new PostIDNotRecognisedException();
-        if (tempPlatform.checkIfEndorsement(id) == false) throw new NotActionablePostException();
-        if (tempPlatform.checkIfEmptyPost(id) == false) throw new NotActionablePostException();
+        if (platform.getAccount(handle) == null) throw new HandleNotRecognisedException();
+        if (platform.getPost(id) == null) throw new PostIDNotRecognisedException();
+        if (platform.checkIfEndorsement(id) == false) throw new NotActionablePostException();
+        if (platform.checkIfEmptyPost(id) == false) throw new NotActionablePostException();
 
-        Endorsement newEndorsement = new Endorsement(handle, id, tempPlatform);
-        tempPlatform.addPost(newEndorsement.uniqueID, newEndorsement);
-        tempPlatform.setCurrentPostID(tempPlatform.getCurrentPostID()+1);
+        Endorsement newEndorsement = new Endorsement(handle, id, platform);
+        platform.addPost(newEndorsement.uniqueID, newEndorsement);
+        platform.setCurrentPostID(platform.getCurrentPostID()+1);
         return newEndorsement.getUniqueID();
     }
 // TODO explain why endorsed posts can't be commented on (contradictions)
     @Override
     public int commentPost(String handle, int id, String message) throws HandleNotRecognisedException,
             PostIDNotRecognisedException, NotActionablePostException, InvalidPostException {
-        if (tempPlatform.getAccount(handle) == null) throw new HandleNotRecognisedException();
-        if (tempPlatform.getPost(id) == null) throw new PostIDNotRecognisedException();
-        if (tempPlatform.checkIfEmptyPost(id) == false) throw new NotActionablePostException();
+        if (platform.getAccount(handle) == null) throw new HandleNotRecognisedException();
+        if (platform.getPost(id) == null) throw new PostIDNotRecognisedException();
+        if (platform.checkIfEmptyPost(id) == false) throw new NotActionablePostException();
         if (message.length() == 0 || message.length() > 100) throw new InvalidPostException();
 
-        Comment newComment = new Comment(handle, id, message, tempPlatform);
-        tempPlatform.addPost(newComment.uniqueID, newComment);
-        tempPlatform.setCurrentPostID(tempPlatform.getCurrentPostID()+1);
+        Comment newComment = new Comment(handle, id, message, platform);
+        platform.addPost(newComment.uniqueID, newComment);
+        platform.setCurrentPostID(platform.getCurrentPostID()+1);
         return newComment.getUniqueID();
     }
 
     @Override
     public void deletePost(int id) throws PostIDNotRecognisedException {
-        if (tempPlatform.getPost(id) == null) throw new PostIDNotRecognisedException();
-        Post postToBeDeleted = tempPlatform.getPost(id);
-        Post.deletePost(postToBeDeleted, tempPlatform);
+        if (platform.getPost(id) == null) throw new PostIDNotRecognisedException();
+        Post postToBeDeleted = platform.getPost(id);
+        Post.deletePost(postToBeDeleted, platform);
     }
 
     @Override
     public String showIndividualPost(int id) throws PostIDNotRecognisedException {
-        if (tempPlatform.getPost(id) == null) throw new PostIDNotRecognisedException();
-        Post post = tempPlatform.getPost(id);
+        if (platform.getPost(id) == null) throw new PostIDNotRecognisedException();
+        Post post = platform.getPost(id);
         String stat = "ID: " + post.getUniqueID() + "\n" +
                 "Account: " + post.getPosterHandle() + "\n" +
                 "No. endorsements: " + post.getEndorsements().size() +
@@ -197,7 +197,7 @@ public class SocialMedia implements SocialMediaPlatform {
     @Override
     public int getTotalOriginalPosts() {
         int noOfOriginals = 0;
-        for (Post post : tempPlatform.getPosts().values()) {
+        for (Post post : platform.getPosts().values()) {
             if (post.getClass() == Original.class) {
                 noOfOriginals += 1;
             }
@@ -208,7 +208,7 @@ public class SocialMedia implements SocialMediaPlatform {
     @Override
     public int getTotalEndorsmentPosts() {
         int noOfEndorsements = 0;
-        for (Post post : tempPlatform.getPosts().values()) {
+        for (Post post : platform.getPosts().values()) {
             if (post.getClass() == Endorsement.class) {
                 noOfEndorsements += 1;
             }
@@ -219,7 +219,7 @@ public class SocialMedia implements SocialMediaPlatform {
     @Override
     public int getTotalCommentPosts() {
         int noOfComments = 0;
-        for (Post post : tempPlatform.getPosts().values()) {
+        for (Post post : platform.getPosts().values()) {
             if (post.getClass() == Comment.class) {
                 noOfComments += 1;
             }
@@ -231,7 +231,7 @@ public class SocialMedia implements SocialMediaPlatform {
     public int getMostEndorsedPost() {
         int noOfEndorsements = -1;
         Post mostEndorsedPost = null;
-        for (Post post : tempPlatform.getPosts().values()) {
+        for (Post post : platform.getPosts().values()) {
             if (post.getEndorsements() != null); {
                 if (post.getEndorsements().size() > noOfEndorsements) {
                     noOfEndorsements = post.getEndorsements().size();

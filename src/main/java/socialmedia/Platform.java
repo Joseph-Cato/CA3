@@ -2,13 +2,13 @@ package socialmedia;
 
 import java.util.HashMap;
 
-public class TempPlatform {
+public class Platform {
 
     private HashMap<String, Account> accounts = new HashMap<>();
     private HashMap<Integer, Post> posts = new HashMap<>();
     private int currentPostID;
 
-    public TempPlatform() {
+    public Platform() {
         this.currentPostID = 0;
     }
 

@@ -3,13 +3,13 @@ package socialmedia;
 public class Endorsement extends Post {
     Post original;
 
-    public Endorsement(String handle, int id, TempPlatform tempPlatform) {
+    public Endorsement(String handle, int id, Platform platform) {
         this.posterHandle = handle;
-        originalPoster = tempPlatform.getAccount(handle);
-        original = tempPlatform.getPost(id);
-        message = "EP@" + handle + ": " + tempPlatform.getPost(id).getMessage();
+        originalPoster = platform.getAccount(handle);
+        original = platform.getPost(id);
+        message = "EP@" + handle + ": " + platform.getPost(id).getMessage();
         original.addEndorsement(this);
-        setUniqueID(tempPlatform);
+        setUniqueID(platform);
     }
 
     public Post getOriginal() {
