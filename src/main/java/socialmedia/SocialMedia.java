@@ -130,7 +130,7 @@ public class SocialMedia implements SocialMediaPlatform {
 
         Original newOriginal = new Original(handle, message, platform);
         platform.addPost(newOriginal.uniqueID, newOriginal);
-        platform.setCurrentPostID(platform.getCurrentPostID()+1);
+        platform.setCurrentPostID(platform.getCurrentPostID()+1); //TODO - I feel this would be better in a post super constructor, the code is slightly hard to follow like this
         return newOriginal.getUniqueID();
     }
 
@@ -144,7 +144,7 @@ public class SocialMedia implements SocialMediaPlatform {
 
         Endorsement newEndorsement = new Endorsement(handle, id, platform);
         platform.addPost(newEndorsement.uniqueID, newEndorsement);
-        platform.setCurrentPostID(platform.getCurrentPostID()+1);
+        platform.setCurrentPostID(platform.getCurrentPostID()+1); //TODO - I feel this would be better in a post super constructor, the code is slightly hard to follow like this
         return newEndorsement.getUniqueID();
     }
 // TODO explain why endorsed posts can't be commented on (contradictions)
@@ -158,7 +158,7 @@ public class SocialMedia implements SocialMediaPlatform {
 
         Comment newComment = new Comment(handle, id, message, platform);
         platform.addPost(newComment.uniqueID, newComment);
-        platform.setCurrentPostID(platform.getCurrentPostID()+1);
+        platform.setCurrentPostID(platform.getCurrentPostID()+1); //TODO - I feel this would be better in a post super constructor, the code is slightly hard to follow like this
         return newComment.getUniqueID();
     }
 
@@ -190,12 +190,13 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public int getNumberOfAccounts() {
-        // TODO Auto-generated method stub
-        return 0;
+
+        return Account.getNumberOfAccounts();
+
     }
 
     @Override
-    public int getTotalOriginalPosts() {
+    public int getTotalOriginalPosts() { // TODO - Maybe we could have separate HashMaps for the types of posts?
         int noOfOriginals = 0;
         for (Post post : platform.getPosts().values()) {
             if (post.getClass() == Original.class) {
@@ -206,7 +207,7 @@ public class SocialMedia implements SocialMediaPlatform {
     }
 
     @Override
-    public int getTotalEndorsmentPosts() {
+    public int getTotalEndorsmentPosts() { // TODO - Maybe we could have separate HashMaps for the types of posts?
         int noOfEndorsements = 0;
         for (Post post : platform.getPosts().values()) {
             if (post.getClass() == Endorsement.class) {
@@ -217,7 +218,7 @@ public class SocialMedia implements SocialMediaPlatform {
     }
 
     @Override
-    public int getTotalCommentPosts() {
+    public int getTotalCommentPosts() { // TODO - Maybe we could have separate HashMaps for the types of posts?
         int noOfComments = 0;
         for (Post post : platform.getPosts().values()) {
             if (post.getClass() == Comment.class) {
@@ -232,14 +233,14 @@ public class SocialMedia implements SocialMediaPlatform {
         int noOfEndorsements = -1;
         Post mostEndorsedPost = null;
         for (Post post : platform.getPosts().values()) {
-            if (post.getEndorsements() != null); {
-                if (post.getEndorsements().size() > noOfEndorsements) {
+            if (post.getEndorsements() != null); { //TODO - Are you sure an empty HashMap returns null? I know about the existence of java.util.Collections.emptyMap()
+                if (post.getEndorsements().size() > noOfEndorsements) { // TODO - HashMap.size() may produce a NullPointerException (Should we try-catch this?)
                     noOfEndorsements = post.getEndorsements().size();
                     mostEndorsedPost = post;
                 }
             }
         }
-        return mostEndorsedPost.getUniqueID();
+        return mostEndorsedPost.getUniqueID(); //TODO - Post.getUniqueID may produce NullPointerException (should we try-catch this?)
     }
 
     @Override

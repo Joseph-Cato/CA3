@@ -32,6 +32,10 @@ public class Account {
         NUMERICAL_IDENTIFIER = numberOfAccounts;
     }
 
+    public static int getNumberOfAccounts() {
+        return numberOfAccounts;
+    }
+
     public String getHandle() {
         return handle;
     }

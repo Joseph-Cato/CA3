@@ -5,10 +5,11 @@ import java.util.HashMap;
 public class Post {
     int uniqueID;
     String posterHandle;
-    String message;
+    String message; // TODO - endorsements don't have messages, keeping it in relevant classes will improve encapsulation and memory usage
     Account originalPoster;
 
     // ONLY FOR USE OF ORIGINALS AND COMMENTS. NOT ENDORSEMENTS.
+    // TODO - Keeping this in comments and original classes with improve Encapsulation and memory usage
     private HashMap<Integer, Comment> comments = new HashMap<>();
     private HashMap<Integer, Endorsement> endorsements = new HashMap<>();
 
@@ -16,7 +17,7 @@ public class Post {
         return uniqueID;
     }
 
-    public void setUniqueID(Platform platform) {
+    public void setUniqueID(Platform platform) { //TODO - I think this would be better suited in a Post class super constructor
         this.uniqueID = platform.getCurrentPostID()+1;
     }
 

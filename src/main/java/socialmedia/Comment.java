@@ -3,7 +3,7 @@ package socialmedia;
 public class Comment extends Post {
     Post original;
 
-    public Comment(String handle, int id, String message, Platform platform) {
+    public Comment(String handle, int id, String message, Platform platform) { //TODO - I feel the code would be much easier to debug using Post super constructor
         this.posterHandle = handle;
         this.message = message;
         setUniqueID(platform);
