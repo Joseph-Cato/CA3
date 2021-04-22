@@ -125,60 +125,85 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public int createPost(String handle, String message) throws HandleNotRecognisedException, InvalidPostException {
-        if (platform.getAccount(handle) == null) throw new HandleNotRecognisedException();
-        if (message.length() == 0 || message.length() > 100) throw new InvalidPostException();
 
-        Original newOriginal = new Original(handle, message, platform);
-        platform.addPost(newOriginal.uniqueID, newOriginal);
-        platform.setCurrentPostID(platform.getCurrentPostID()+1); //TODO - I feel this would be better in a post super constructor, the code is slightly hard to follow like this
-        return newOriginal.getUniqueID();
+        // Checks if user handle exists on system
+        if (!platform.getAccounts().containsKey(handle)) throw new HandleNotRecognisedException();
+
+        // If message is empty or has more than 100 characters is it invalid
+        if (message.equals("") || message.length() > 100) throw new InvalidPostException();
+
+        // Creates new original
+        Original original = new Original(handle, message);
+
+        // Adds original to platform
+        platform.addOriginal(original);
+
+        // Adds original to Account
+        platform.getAccount(handle).addOriginal(original);
+
+        return original.getId();
+
     }
 
     @Override
     public int endorsePost(String handle, int id)
             throws HandleNotRecognisedException, PostIDNotRecognisedException, NotActionablePostException {
-        if (platform.getAccount(handle) == null) throw new HandleNotRecognisedException();
-        if (platform.getPost(id) == null) throw new PostIDNotRecognisedException();
-        if (platform.checkIfEndorsement(id) == false) throw new NotActionablePostException();
-        if (platform.checkIfEmptyPost(id) == false) throw new NotActionablePostException();
 
-        Endorsement newEndorsement = new Endorsement(handle, id, platform);
-        platform.addPost(newEndorsement.uniqueID, newEndorsement);
-        platform.setCurrentPostID(platform.getCurrentPostID()+1); //TODO - I feel this would be better in a post super constructor, the code is slightly hard to follow like this
-        return newEndorsement.getUniqueID();
+        // Checks if the user exists in the system, throws HandleNotRecognisedException otherwise
+        if (platform.getAccount(handle) == null) throw new HandleNotRecognisedException();
+
+        // Gets the original post, one of these will be null depending on the type of post
+        // TODO .get() may throw NullPointerException instead of returning null
+        Original original = platform.getOriginals().get(id);
+        Comment comment = platform.getComments().get(id);
+        Endorsement endorsement = platform.getEndorsements().get(id);
+
+        if (original != null) {
+
+            // If the post is a original the endorsement object will be created with the original
+            endorsement = new Endorsement(handle, original);
+        } else if (comment != null) {
+
+            // If the post is a comment the endorsement object will be created with the comment
+            endorsement = new Endorsement(handle, comment);
+        } else if (endorsement != null){
+
+            // If the post is an endorsement a NotActionablePostException is thrown
+            throw new NotActionablePostException();
+        } else {
+
+            // If no post object with the specified id is found a PostIDNotRecognisedException is thrown
+            throw new PostIDNotRecognisedException();
+        }
+
+        // Adds endorsement to system
+        platform.addEndorsement(endorsement);
+
+        // Adds endorsement to Account
+        platform.getAccount(handle).addEndorsement(endorsement);
+
+
+        return endorsement.getId();
+
     }
-// TODO explain why endorsed posts can't be commented on (contradictions)
+
     @Override
     public int commentPost(String handle, int id, String message) throws HandleNotRecognisedException,
             PostIDNotRecognisedException, NotActionablePostException, InvalidPostException {
-        if (platform.getAccount(handle) == null) throw new HandleNotRecognisedException();
-        if (platform.getPost(id) == null) throw new PostIDNotRecognisedException();
-        if (platform.checkIfEmptyPost(id) == false) throw new NotActionablePostException();
-        if (message.length() == 0 || message.length() > 100) throw new InvalidPostException();
-
-        Comment newComment = new Comment(handle, id, message, platform);
-        platform.addPost(newComment.uniqueID, newComment);
-        platform.setCurrentPostID(platform.getCurrentPostID()+1); //TODO - I feel this would be better in a post super constructor, the code is slightly hard to follow like this
-        return newComment.getUniqueID();
+        // TODO Auto-generated method stub
+        return 0;
     }
 
     @Override
     public void deletePost(int id) throws PostIDNotRecognisedException {
-        if (platform.getPost(id) == null) throw new PostIDNotRecognisedException();
-        Post postToBeDeleted = platform.getPost(id);
-        Post.deletePost(postToBeDeleted, platform);
+        // TODO Auto-generated method stub
+
     }
 
     @Override
     public String showIndividualPost(int id) throws PostIDNotRecognisedException {
-        if (platform.getPost(id) == null) throw new PostIDNotRecognisedException();
-        Post post = platform.getPost(id);
-        String stat = "ID: " + post.getUniqueID() + "\n" +
-                "Account: " + post.getPosterHandle() + "\n" +
-                "No. endorsements: " + post.getEndorsements().size() +
-                "No. comments: " + post.getComments().size() + "\n" +
-                post.getMessage();
-        return stat;
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
@@ -197,50 +222,26 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public int getTotalOriginalPosts() { // TODO - Maybe we could have separate HashMaps for the types of posts?
-        int noOfOriginals = 0;
-        for (Post post : platform.getPosts().values()) {
-            if (post.getClass() == Original.class) {
-                noOfOriginals += 1;
-            }
-        }
-        return noOfOriginals;
+        // TODO Auto-generated method stub
+        return 0;
     }
 
     @Override
     public int getTotalEndorsmentPosts() { // TODO - Maybe we could have separate HashMaps for the types of posts?
-        int noOfEndorsements = 0;
-        for (Post post : platform.getPosts().values()) {
-            if (post.getClass() == Endorsement.class) {
-                noOfEndorsements += 1;
-            }
-        }
-        return noOfEndorsements;
+        // TODO Auto-generated method stub
+        return 0;
     }
 
     @Override
     public int getTotalCommentPosts() { // TODO - Maybe we could have separate HashMaps for the types of posts?
-        int noOfComments = 0;
-        for (Post post : platform.getPosts().values()) {
-            if (post.getClass() == Comment.class) {
-                noOfComments += 1;
-            }
-        }
-        return noOfComments;
+        // TODO Auto-generated method stub
+        return 0;
     }
 
     @Override
     public int getMostEndorsedPost() {
-        int noOfEndorsements = -1;
-        Post mostEndorsedPost = null;
-        for (Post post : platform.getPosts().values()) {
-            if (post.getEndorsements() != null); { //TODO - Are you sure an empty HashMap returns null? I know about the existence of java.util.Collections.emptyMap()
-                if (post.getEndorsements().size() > noOfEndorsements) { // TODO - HashMap.size() may produce a NullPointerException (Should we try-catch this?)
-                    noOfEndorsements = post.getEndorsements().size();
-                    mostEndorsedPost = post;
-                }
-            }
-        }
-        return mostEndorsedPost.getUniqueID(); //TODO - Post.getUniqueID may produce NullPointerException (should we try-catch this?)
+        // TODO Auto-generated method stub
+        return 0;
     }
 
     @Override

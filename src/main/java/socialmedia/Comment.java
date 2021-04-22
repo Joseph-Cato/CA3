@@ -1,25 +1,23 @@
 package socialmedia;
 
 public class Comment extends Post {
-    Post original;
 
-    public Comment(String handle, int id, String message, Platform platform) { //TODO - I feel the code would be much easier to debug using Post super constructor
-        this.posterHandle = handle;
-        this.message = message;
-        setUniqueID(platform);
-        originalPoster = platform.getAccount(handle);
-        original = platform.getPost(id);
-        if (original.getClass() == Endorsement.class) {
-            original = ((Endorsement) original).getOriginal();
-        }
-        original.addComment(this);
+    private String message;
+    private Post originalPost;
+
+    public Comment(String handle, Original original) {
+        super(handle);
+
+        originalPost = original;
     }
 
-    public Post getOriginal() {
-        return original;
+    public Comment(String handle, Comment original) {
+        super(handle);
+
+        originalPost = original;
     }
 
-    public void setOriginal(Post original) {
-        this.original = original;
+    public String getMessage() {
+        return message;
     }
 }

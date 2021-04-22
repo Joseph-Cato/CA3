@@ -4,24 +4,20 @@ import java.util.HashMap;
 
 public class Platform {
 
+    //TODO - set hashmaps to bigger default size to increase efficiency
+
     private HashMap<String, Account> accounts = new HashMap<>();
-    private HashMap<Integer, Post> posts = new HashMap<>();
-    private int currentPostID;
 
-    public Platform() {
-        this.currentPostID = 0;
-    }
+    private HashMap<Integer, Original> originals = new HashMap<>();
 
-    public int getCurrentPostID() {
-        return currentPostID;
-    }
+    private HashMap<Integer, Comment> comments = new HashMap<>();
 
-    public void setCurrentPostID(int currentPostID) {
-        this.currentPostID = currentPostID;
-    }
+    private HashMap<Integer, Endorsement> endorsements = new HashMap<>();
 
-    Post getPost(Integer id) {
-        return posts.get(id);
+
+
+    HashMap<String, Account> getAccounts() {
+        return accounts;
     }
 
     void addAccount(String handle, Account account){
@@ -36,38 +32,28 @@ public class Platform {
         return accounts.get(handle);
     }
 
-    HashMap<String, Account> getAccounts() {
-        return accounts;
+    void addOriginal(Original original){
+
+        int id = original.getId();
+
+        originals.put(id, original);
     }
 
 
-    public HashMap<Integer, Post> getPosts() {
-        return posts;
+    void addEndorsement(Endorsement endorsement) throws NullPointerException{
+        endorsements.put(endorsement.getId(), endorsement);
     }
 
-    boolean checkIfEndorsement (Integer id) {
-        if (posts.get(id).getClass() != Endorsement.class) { //TODO - So method 'checkIfEndorsement' returns true if it's NOT an endorsement?
-            return true;
-        } return false;
+    HashMap<Integer, Original> getOriginals() {
+        return originals;
     }
 
-    boolean checkIfEmptyPost (Integer id) {
-        if (posts.get(id).getClass() != EmptyPost.class ) { //TODO - same as checkIfEndorsement
-            return true;
-        } return false;
+    HashMap<Integer, Comment> getComments() {
+        return comments;
     }
 
-    void addPost(Integer id, Post post) {
-        posts.put(id, post);
-    }
-
-    void removePost(Post post) {
-        posts.remove(post);
-        //TODO - !I think this will throw a ClassCastException!
-        // Platform's 'posts' HashMap's KEYS are Integers, the VALUES are posts
-        // HashMap<K, V>
-        // <K> – the type of keys maintained by this map
-        // <V> – the type of mapped values
+    HashMap<Integer, Endorsement> getEndorsements() {
+        return endorsements;
     }
 
     /**

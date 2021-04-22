@@ -1,6 +1,7 @@
 package socialmedia;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -315,6 +316,172 @@ public class SocialMediaTest {
     public void showAccountTest() {
 
         // TODO - create when basic post framework is in
+
+    }
+
+    /*
+    -----------------Post Method Tests-----------------
+     */
+
+    @Test
+    public void createPostTest() {
+
+        try {
+            SocialMedia sm = new SocialMedia();
+
+            Post.setNumberOfPosts(0);
+
+            sm.createAccount("Jimmy");
+            sm.createAccount("Dave", "go away ");
+
+            sm.createPost("Jimmy", "Hi I'm Jimmy!!!");
+            sm.createPost("Jimmy", "I posted twice :)");
+            sm.createPost("Dave", "nobody cares");
+
+            Assert.assertTrue(sm.platform.getOriginals().containsKey(0));
+            Assert.assertTrue(sm.platform.getOriginals().containsKey(1));
+            Assert.assertTrue(sm.platform.getOriginals().containsKey(2));
+
+            Post.setNumberOfPosts(0);
+
+            Original o1 = new Original("Jimmy", "Hi I'm Jimmy!!!");
+            Original o2 = new Original("Jimmy", "I posted twice :)");
+            Original o3 = new Original("Dave", "nobody cares");
+
+            Assert.assertEquals(o1.getMessage(), sm.platform.getOriginals().get(0).getMessage());
+            Assert.assertEquals(o2.getMessage(), sm.platform.getOriginals().get(1).getMessage());
+            Assert.assertEquals(o3.getMessage(), sm.platform.getOriginals().get(2).getMessage());
+
+            Assert.assertEquals(o1.getHandle(), sm.platform.getOriginals().get(0).getHandle());
+            Assert.assertEquals(o2.getHandle(), sm.platform.getOriginals().get(1).getHandle());
+            Assert.assertEquals(o3.getHandle(), sm.platform.getOriginals().get(2).getHandle());
+
+            Assert.assertEquals(o1.getId(), sm.platform.getOriginals().get(0).getId());
+            Assert.assertEquals(o2.getId(), sm.platform.getOriginals().get(1).getId());
+            Assert.assertEquals(o3.getId(), sm.platform.getOriginals().get(2).getId());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void createPostBadHandleTest() {
+
+        try {
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("Ben");
+
+            Assert.assertThrows(HandleNotRecognisedException.class, () -> sm.createPost("Joe", "Hi"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void createPostBadPostTest() {
+
+        try  {
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("Ben");
+
+            Assert.assertThrows(InvalidPostException.class, () -> sm.createPost("Ben", ""));
+            Assert.assertThrows(InvalidPostException.class, () -> sm.createPost("Ben", "seFAWRFWETRHGEWN FKLUJIHAWEFRAWERGAERGesrfgsetjn0o87y4hg23498762rbouygbf9874362gbfkuwe3yg245    52t 3"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Test
+    public void endorsePostTest() {
+
+        try {
+
+            SocialMedia sm = new SocialMedia();
+
+            Post.setNumberOfPosts(0);
+
+            sm.createAccount("Ben");
+            sm.createAccount("Jimmy", "Jimmy is cool");
+
+            sm.createPost("Ben", "Hi I'm ben!");
+
+            sm.endorsePost("Jimmy", 0);
+
+            Endorsement actual = (Endorsement) sm.platform.getAccount("Jimmy").getEndorsements().toArray()[0];
+
+            Assert.assertEquals( sm.platform.getEndorsements().get(1), actual);
+
+            Assert.assertEquals( "Jimmy", actual.getHandle());
+            Assert.assertEquals( 1, actual.getId());
+            Assert.assertEquals( "EP@Jimmy:Hi I'm ben!", actual.getMessage());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void endorsePostBadHandleTest() {
+        try {
+
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("John");
+
+            sm.createPost("John", "one");
+
+            Assert.assertThrows(HandleNotRecognisedException.class, () -> sm.endorsePost("Ben", 0));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void endorsePostBadIdTest() {
+
+        try {
+
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("Jim");
+
+            Assert.assertThrows(PostIDNotRecognisedException.class, () -> sm.endorsePost("Jim", 0));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void endorsePostEndorsementTest() {
+
+        try {
+
+            SocialMedia sm = new SocialMedia();
+
+            Post.setNumberOfPosts(0);
+
+            sm.createAccount("Jim", "jim");
+            sm.createAccount("Jess");
+
+            sm.createPost("Jim", "hi");
+
+            sm.endorsePost("Jess", 0);
+
+            Assert.assertThrows(NotActionablePostException.class, () -> sm.endorsePost("Jim", 1));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void commentPostTest() {
 
     }
 

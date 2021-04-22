@@ -1,14 +1,17 @@
 package socialmedia;
 
-
 public class Original extends Post {
 
-    public Original(String handle, String message, Platform platform) {
-        this.posterHandle = handle;
+    private String message;
+    private int numberOfEndorsements = 0;
+
+    public Original(String handle, String message) {
+        super(handle);
+
         this.message = message;
-        originalPoster = platform.getAccount(handle);
-        setUniqueID(platform);
     }
 
-
+    public String getMessage() {
+        return message;
+    }
 }

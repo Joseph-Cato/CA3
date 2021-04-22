@@ -1,18 +1,25 @@
 package socialmedia;
 
 public class Endorsement extends Post {
-    Post original;
 
-    public Endorsement(String handle, int id, Platform platform) { //TODO - I feel the code would be much easier to debug using Post super constructor
-        this.posterHandle = handle;
-        originalPoster = platform.getAccount(handle);
-        original = platform.getPost(id);
-        message = "EP@" + handle + ": " + platform.getPost(id).getMessage();
-        original.addEndorsement(this);
-        setUniqueID(platform);
+    private Post endorsedPost;
+    private String message;
+
+    public Endorsement(String handle, Original endorsedPost) {
+        super(handle);
+
+        this.endorsedPost = endorsedPost;
+        this.message = "EP@" + handle + ":" + endorsedPost.getMessage();
     }
 
-    public Post getOriginal() {
-        return original;
+    public Endorsement(String handle, Comment endorsedPost) {
+        super(handle);
+
+        this.endorsedPost = endorsedPost;
+        this.message = "EP@" + handle + ":" + endorsedPost.getMessage();
+    }
+
+    public String getMessage() {
+        return message;
     }
 }
