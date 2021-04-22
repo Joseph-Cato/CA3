@@ -380,7 +380,7 @@ public class SocialMediaTest {
     }
 
     @Test
-    public void createPostBadPostTest() {
+    public void createPostBadMessageTest() {
 
         try  {
             SocialMedia sm = new SocialMedia();
@@ -483,6 +483,114 @@ public class SocialMediaTest {
     @Test
     public void commentPostTest() {
 
+        Post.setNumberOfPosts(0);
+
+        SocialMedia sm = new SocialMedia();
+
+        try {
+
+            sm.createAccount("ben");
+
+            sm.createAccount("dave");
+
+            sm.createPost("ben", "1"); //0
+
+            sm.commentPost("ben", 0, "1commentBen"); //1
+
+            sm.commentPost("dave", 1, "1commentCommentDave"); //2
+
+            sm.commentPost("dave", 0, "1commentDave"); //3
+
+            Comment actualComment1 = sm.platform.getComments().get(1);
+            Comment actualComment2 = sm.platform.getComments().get(2);
+            Comment actualComment3 = sm.platform.getComments().get(3);
+
+            Assert.assertEquals("1commentBen", actualComment1.getMessage());
+            Assert.assertEquals("1commentCommentDave", actualComment2.getMessage());
+            Assert.assertEquals("1commentDave", actualComment3.getMessage());
+
+            Assert.assertEquals(sm.platform.getOriginals().get(0), actualComment1.getOriginalPost());
+            Assert.assertEquals(sm.platform.getComments().get(1), actualComment2.getOriginalPost());
+            Assert.assertEquals(sm.platform.getOriginals().get(0), actualComment3.getOriginalPost());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
+    @Test
+    public void commentPostBadHandleTest() {
+
+        try {
+
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("j");
+
+            sm.createPost("j", "j");
+
+            Assert.assertThrows(HandleNotRecognisedException.class, () -> sm.commentPost("daveyyyy", 0, "hi"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void commentPostBadIdTest() {
+
+        try {
+
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("bob");
+
+            sm.createPost("bob", "hi");
+
+            Assert.assertThrows(PostIDNotRecognisedException.class, () -> sm.commentPost("bob", 5, "hi"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void commentPostBadPostTest() {
+
+        try {
+
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("billy");
+            sm.createAccount("Jess");
+
+            sm.createPost("billy", " qawdilhyv"); //0
+
+            sm.endorsePost("Jess", 0); //1
+
+            Assert.assertThrows(NotActionablePostException.class, () -> sm.commentPost("billy", 1, "this won't work!"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void commentPostBadMessageTest() {
+
+        try {
+
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("Joe");
+
+            sm.createPost("Joe", "hi");
+
+            Assert.assertThrows(InvalidPostException.class, () -> sm.commentPost("Joe", 0, ""));
+
+            Assert.assertThrows(InvalidPostException.class, () -> sm.commentPost("Joe", 0, "seFAWRFWETRHGEWN FKLUJIHAWEFRAWERGAERGesrfgsetjn0o87y4hg23498762rbouygbf9874362gbfkuwe3yg245    52t 3"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

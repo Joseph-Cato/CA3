@@ -39,6 +39,9 @@ public class Platform {
         originals.put(id, original);
     }
 
+    void addComment(Comment comment) {
+        comments.put(comment.getId(), comment);
+    }
 
     void addEndorsement(Endorsement endorsement) throws NullPointerException{
         endorsements.put(endorsement.getId(), endorsement);

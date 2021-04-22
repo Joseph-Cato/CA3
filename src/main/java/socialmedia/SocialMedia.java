@@ -4,7 +4,14 @@ import java.io.IOException;
 
 public class SocialMedia implements SocialMediaPlatform {
 
-    public Platform platform = new Platform();
+    public Platform platform;
+
+    public SocialMedia() {
+
+        platform = new Platform();
+
+        Post.setNumberOfPosts(0);
+    }
 
     @Override
     public int createAccount(String handle) throws IllegalHandleException, InvalidHandleException {
@@ -190,8 +197,46 @@ public class SocialMedia implements SocialMediaPlatform {
     @Override
     public int commentPost(String handle, int id, String message) throws HandleNotRecognisedException,
             PostIDNotRecognisedException, NotActionablePostException, InvalidPostException {
-        // TODO Auto-generated method stub
-        return 0;
+
+        // If message is empty or greater than 100 character a InvalidPostException is thrown
+        if (message.equals("") || message.length() > 100) throw new InvalidPostException();
+
+        // Account is retrieved from the platform, if no account is found a HandleNotRecognisedException is thrown
+        Account account = platform.getAccount(handle);
+        if (account == null) throw new HandleNotRecognisedException();
+
+        Comment newComment;
+
+        // Gets the post from the systems collections, these objects will be null if they are the wrong type
+        Comment comment = platform.getComments().get(id);
+        Original original = platform.getOriginals().get(id);
+        Endorsement endorsement = platform.getEndorsements().get(id);
+
+        if (comment != null) {
+
+            // If the post is a comment an appropriate Comment object is created
+            newComment = new Comment(handle, comment, message);
+        } else if (original != null) {
+
+            // If the post is an Original an appropriate Comment object is created
+            newComment = new Comment(handle, original, message);
+        } else if (endorsement != null) {
+
+            // If the post is an endorsement a NotActionablePostException is thrown
+            throw new NotActionablePostException();
+        } else {
+
+            // If the post is not found in the system a PostIDNotRecognisedException is thrown
+            throw new PostIDNotRecognisedException();
+        }
+
+        // Adds comment to the users Account
+        account.addComment(newComment);
+
+        // Adds comment to the platform
+        platform.addComment(newComment);
+
+        return newComment.getId();
     }
 
     @Override
