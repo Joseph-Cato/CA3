@@ -46,13 +46,13 @@ public class Platform {
     }
 
     boolean checkIfEndorsement (Integer id) {
-        if (posts.get(id).getClass() != Endorsement.class) {
+        if (posts.get(id).getClass() != Endorsement.class) { //TODO - So method 'checkIfEndorsement' returns true if it's NOT an endorsement?
             return true;
         } return false;
     }
 
     boolean checkIfEmptyPost (Integer id) {
-        if (posts.get(id).getClass() != EmptyPost.class ) {
+        if (posts.get(id).getClass() != EmptyPost.class ) { //TODO - same as checkIfEndorsement
             return true;
         } return false;
     }
@@ -63,13 +63,18 @@ public class Platform {
 
     void removePost(Post post) {
         posts.remove(post);
+        //TODO - !I think this will throw a ClassCastException!
+        // Platform's 'posts' HashMap's KEYS are Integers, the VALUES are posts
+        // HashMap<K, V>
+        // <K> – the type of keys maintained by this map
+        // <V> – the type of mapped values
     }
 
     /**
      *  Method used solely for testing.
      * @return HashMap of account handles and descriptions in the system.
      */
-    HashMap<String, String> printAccounts(){
+    HashMap<String, String> printAccounts(){ //TODO - Learn how to properly test HashMaps instead of this horrible thing
 
         HashMap<String, String> accountList = new HashMap<>();
 
