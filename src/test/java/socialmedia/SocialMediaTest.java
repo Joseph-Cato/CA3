@@ -593,4 +593,58 @@ public class SocialMediaTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void deletePostTest() {
+
+        try {
+
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("ben");
+
+            sm.createAccount("james");
+
+            sm.createPost("ben", "hi");
+
+            sm.commentPost("james", 0, "hello");
+
+            sm.deletePost(0);
+
+
+            Original deletedPost = sm.platform.getOriginals().get(0);
+
+            Comment comment = sm.platform.getComments().get(1);
+
+
+            Assert.assertEquals(null, deletedPost.getHandle());
+
+            Assert.assertEquals("The original content was removed from the system and is no longer available.", deletedPost.getMessage());
+
+            Assert.assertEquals(false, deletedPost.isActionable());
+
+            Assert.assertEquals(deletedPost, comment.getOriginalPost());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void deletePostBadIdTest() {
+
+        try {
+
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("ben");
+
+            sm.createPost("ben", "hi"); //0
+
+            Assert.assertThrows(PostIDNotRecognisedException.class, () -> sm.deletePost(2));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

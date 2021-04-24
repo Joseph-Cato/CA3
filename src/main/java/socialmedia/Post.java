@@ -26,4 +26,12 @@ public class Post {
     public String getHandle() {
         return handle;
     }
+
+    public void setHandle(String handle) {
+        this.handle = handle;
+    }
+
+    public void deletePost() {
+        handle = null;
+    }
 }

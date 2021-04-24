@@ -165,13 +165,22 @@ public class SocialMedia implements SocialMediaPlatform {
         Comment comment = platform.getComments().get(id);
         Endorsement endorsement = platform.getEndorsements().get(id);
 
-        if (original != null) {
 
-            // If the post is a original the endorsement object will be created with the original
+        if (original != null) {
+            // If the post is a original:
+
+            // If post is deleted, NotActionablePostException is thrown
+            if (!original.isActionable()) throw new NotActionablePostException();
+
+            //The endorsement object will be created with the original
             endorsement = new Endorsement(handle, original);
         } else if (comment != null) {
+            // If the post is a comment:
 
-            // If the post is a comment the endorsement object will be created with the comment
+            // If post is deleted, NotActionablePostException is thrown
+            if (!comment.isActionable()) throw new NotActionablePostException();
+
+            // The endorsement object will be created with the comment
             endorsement = new Endorsement(handle, comment);
         } else if (endorsement != null){
 
@@ -213,12 +222,20 @@ public class SocialMedia implements SocialMediaPlatform {
         Endorsement endorsement = platform.getEndorsements().get(id);
 
         if (comment != null) {
+            // If the post is a comment:
 
-            // If the post is a comment an appropriate Comment object is created
+            // If post is deleted, NotActionablePostException is thrown
+            if (!comment.isActionable()) throw new NotActionablePostException();
+
+            // An appropriate Comment object is created
             newComment = new Comment(handle, comment, message);
         } else if (original != null) {
+            // If the post is an Original:
 
-            // If the post is an Original an appropriate Comment object is created
+            // If post is deleted, NotActionablePostException is thrown
+            if (!original.isActionable()) throw new NotActionablePostException();
+
+            // An appropriate Comment object is created
             newComment = new Comment(handle, original, message);
         } else if (endorsement != null) {
 
@@ -242,6 +259,26 @@ public class SocialMedia implements SocialMediaPlatform {
     @Override
     public void deletePost(int id) throws PostIDNotRecognisedException {
         // TODO Auto-generated method stub
+
+        // One of these variables will be not null depending on the type of object the post is
+        Original original = platform.getOriginals().get(id);
+        Comment comment = platform.getComments().get(id);
+        Endorsement endorsement = platform.getEndorsements().get(id);
+
+        if (original != null) {
+
+            original.deletePost();
+        } else if (comment != null) {
+
+            comment.deletePost();
+        } else if (endorsement != null) {
+
+            endorsement.deletePost();
+        } else {
+
+            // If id does not match any post object type then it does not exist, PostIDNotRecognisedException is thrown
+            throw new PostIDNotRecognisedException();
+        }
 
     }
 
