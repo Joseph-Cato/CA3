@@ -15,6 +15,12 @@ public class Post {
 
     }
 
+    public void deletePost() {
+
+        handle = null;
+
+    }
+
     public static void setNumberOfPosts(int numberOfPosts) {
         Post.numberOfPosts = numberOfPosts;
     }
@@ -31,7 +37,4 @@ public class Post {
         this.handle = handle;
     }
 
-    public void deletePost() {
-        handle = null;
-    }
 }

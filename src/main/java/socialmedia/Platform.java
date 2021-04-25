@@ -1,5 +1,6 @@
 package socialmedia;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Platform {
@@ -13,7 +14,6 @@ public class Platform {
     private HashMap<Integer, Comment> comments = new HashMap<>();
 
     private HashMap<Integer, Endorsement> endorsements = new HashMap<>();
-
 
 
     HashMap<String, Account> getAccounts() {

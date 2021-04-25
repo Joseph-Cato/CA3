@@ -2,6 +2,7 @@ package socialmedia;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -76,7 +77,7 @@ public class SocialMediaTest {
             sm.createAccount("Jessica", "Not as cool as Jimmy :(");
             sm.createAccount("JakeyBoi", "123123iuyadesegf9786q3w4w2gou");
 
-            sm.removeAccount(2);
+            sm.removeAccount(1);
             sm.removeAccount("JakeyBoi");
 
         } catch (Exception e) {
@@ -120,7 +121,7 @@ public class SocialMediaTest {
         Assert.assertThrows(AccountIDNotRecognisedException.class, () -> finalSm.removeAccount(2));
 
         SocialMedia finalSm2 = sm;
-        Assert.assertThrows(AccountIDNotRecognisedException.class, () -> finalSm2.removeAccount(0));
+        Assert.assertThrows(AccountIDNotRecognisedException.class, () -> finalSm2.removeAccount(1));
 
         SocialMedia finalSm3 = sm;
         Assert.assertThrows(AccountIDNotRecognisedException.class, () -> finalSm3.removeAccount(-1));
@@ -510,7 +511,7 @@ public class SocialMediaTest {
             Assert.assertEquals("1commentDave", actualComment3.getMessage());
 
             Assert.assertEquals(sm.platform.getOriginals().get(0), actualComment1.getOriginalPost());
-            Assert.assertEquals(sm.platform.getComments().get(1), actualComment2.getOriginalPost());
+            Assert.assertEquals(sm.platform.getComments().get(1), actualComment2.getOriginalComment());
             Assert.assertEquals(sm.platform.getOriginals().get(0), actualComment3.getOriginalPost());
 
         } catch (Exception e) {
@@ -647,4 +648,239 @@ public class SocialMediaTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void showIndividualPostTest() {
+
+        try {
+
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("ben");
+            sm.createAccount("jim");
+            sm.createAccount("bob");
+
+            sm.createPost("ben", "one"); //0
+
+            sm.commentPost("ben", 0, "two"); //1
+
+            sm.endorsePost("jim", 1); //2
+
+            sm.endorsePost("bob", 1);
+
+            String expected1 = """
+                    ID: 0
+                    Account: ben
+                    No. endorsements: 0 | No. comments: 1
+                    one
+                    """;
+
+            String expected2 = """
+                    ID: 1
+                    Account: ben
+                    No. endorsements: 2 | No. comments: 0
+                    two
+                    """;
+
+
+            Assert.assertEquals(expected1, sm.showIndividualPost(0));
+
+            Assert.assertEquals(expected2, sm.showIndividualPost(1));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void showIndividualPostBadIdTest() {
+
+        try {
+
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("ben");
+
+            sm.createPost("ben", "test00");
+
+
+            Assert.assertThrows(PostIDNotRecognisedException.class, () -> sm.deletePost(1));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /*
+    @Test
+    public void showPostChildrenDetailsTest(){
+        Assert.assertTrue(false);
+    }
+
+    @Test
+    public void showPostChildrenDetailsBadIdTest() {
+        Assert.assertTrue(false);
+    }
+
+    @Test
+    public void showPostChildrenDetailsBadPostTest() {
+        Assert.assertTrue(false);
+    }
+
+     */
+
+    @Test
+    public void getNumberOfAccountsTest() {
+
+        try {
+
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("0");
+            sm.createAccount("1");
+            sm.createAccount("2");
+            sm.createAccount("3");
+
+            Assert.assertEquals(4, sm.getNumberOfAccounts());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void getTotalOriginalPostsTest() {
+
+        try {
+
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("1");
+
+            sm.createPost("1", "test");
+            sm.createPost("1", "test");
+            sm.createPost("1", "test");
+            sm.createPost("1", "test");
+            sm.createPost("1", "test");
+            sm.createPost("1", "test");
+
+            Assert.assertEquals(6, sm.getTotalOriginalPosts());
+
+            sm.deletePost(3);
+
+            Assert.assertEquals(5, sm.getTotalOriginalPosts());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void getTotalEndorsmentPostsTest() {
+
+        try {
+
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("1");
+            sm.createAccount("2");
+            sm.createAccount("3");
+
+            sm.createPost("1", "1");
+
+            sm.endorsePost("2", 0);
+            sm.endorsePost("3", 0);
+
+            Assert.assertEquals(2, sm.getTotalEndorsmentPosts());
+
+            sm.deletePost(2);
+
+            Assert.assertEquals(1, sm.getTotalEndorsmentPosts());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void getTotalCommentPostsTest() {
+
+        try {
+
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("1");
+            sm.createAccount("2");
+
+            sm.createPost("1", "0");
+
+            sm.commentPost("1", 0, "1");
+            sm.commentPost("2", 0, "2");
+            sm.commentPost("1", 2, "3");
+
+            Assert.assertEquals(3, sm.getTotalCommentPosts());
+
+            sm.deletePost(2);
+
+            Assert.assertEquals(2, sm.getTotalCommentPosts());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void getMostEndorsedPostTest() {
+
+        try {
+
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("1");
+            sm.createAccount("2");
+            sm.createAccount("3");
+
+            sm.createPost("1", "0");
+            sm.createPost("2", "1");
+
+            sm.endorsePost("1", 0);
+            sm.endorsePost("2", 1);
+            sm.endorsePost("3", 1);
+
+            Assert.assertEquals(sm.platform.getOriginals().get(1).getId(), sm.getMostEndorsedPost());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void getMostEndorsedAccountTest() {
+
+        try {
+
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("0"); // Account id 0
+            sm.createAccount("1"); // Account id 1
+            sm.createAccount("2"); // Account id 2
+
+            sm.createPost("0", "0"); // post id 0
+            sm.createPost("1", "1"); // post id 1
+
+            sm.endorsePost("0", 1); // post id 2
+
+            sm.endorsePost("1", 0); // post id 3
+            sm.endorsePost("2", 0); // post id 4
+
+            Assert.assertEquals(0, sm.getMostEndorsedAccount());
+
+            sm.deletePost(3);
+            sm.deletePost(4);
+
+            Assert.assertEquals(1, sm.getMostEndorsedAccount());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

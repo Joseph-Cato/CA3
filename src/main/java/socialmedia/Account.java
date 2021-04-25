@@ -12,6 +12,8 @@ public class Account {
 
     private String description;
 
+    private int totalEndorsements = 0;
+
     private HashSet<Comment> comments = new HashSet<Comment>();
 
     private HashSet<Original> originals = new HashSet<Original>();
@@ -19,15 +21,36 @@ public class Account {
     private HashSet<Endorsement> endorsements = new HashSet<Endorsement>();
 
 
+    public static void setNumberOfAccounts(int value) {
+        numberOfAccounts = value;
+    }
+
     public Account(String handle, String description){
 
         this.handle = handle;
 
         this.description = description;
 
+        NUMERICAL_IDENTIFIER = numberOfAccounts;
+
         numberOfAccounts += 1;
 
-        NUMERICAL_IDENTIFIER = numberOfAccounts;
+    }
+
+    public HashSet<Comment> getComments() {
+        return comments;
+    }
+
+    public HashSet<Original> getOriginals() {
+        return originals;
+    }
+
+    public void setTotalEndorsements(int value) {
+        totalEndorsements = value;
+    }
+
+    public int getTotalEndorsements() {
+        return totalEndorsements;
     }
 
     public void addComment(Comment comment) {
