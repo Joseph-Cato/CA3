@@ -1,5 +1,7 @@
 package socialmedia;
 
+import java.util.HashSet;
+
 public class Account {
 
     private static int numberOfAccounts = 0;
@@ -10,16 +12,18 @@ public class Account {
 
     private String description;
 
+    private int totalEndorsements = 0;
 
-
-
-/* //TODO Format these according to classes
     private HashSet<Comment> comments = new HashSet<Comment>();
 
     private HashSet<Original> originals = new HashSet<Original>();
 
     private HashSet<Endorsement> endorsements = new HashSet<Endorsement>();
-*/
+
+
+    public static void setNumberOfAccounts(int value) {
+        numberOfAccounts = value;
+    }
 
     public Account(String handle, String description){
 
@@ -27,9 +31,54 @@ public class Account {
 
         this.description = description;
 
+        NUMERICAL_IDENTIFIER = numberOfAccounts;
+
         numberOfAccounts += 1;
 
-        NUMERICAL_IDENTIFIER = numberOfAccounts;
+    }
+
+    public HashSet<Comment> getComments() {
+        return comments;
+    }
+
+    public HashSet<Original> getOriginals() {
+        return originals;
+    }
+
+    public void setTotalEndorsements(int value) {
+        totalEndorsements = value;
+    }
+
+    public int getTotalEndorsements() {
+        return totalEndorsements;
+    }
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+    }
+
+    public void removeComment(Comment comment) {
+        comments.remove(comment);
+    }
+
+    public void addOriginal(Original original) {
+        originals.add(original);
+    }
+
+    public void removeOriginal(Original original) {
+        originals.remove(original);
+    }
+
+    public void addEndorsement(Endorsement endorsement) {
+        endorsements.add(endorsement);
+    }
+
+    public void removeEndorsement(Endorsement endorsement) {
+        endorsements.remove(endorsement);
+    }
+
+    public HashSet<Endorsement> getEndorsements() {
+        return endorsements;
     }
 
     public static int getNumberOfAccounts() {
@@ -60,6 +109,9 @@ public class Account {
         this.handle = handle;
     }
 
+    public int getTotalPosts() {
+        return comments.size() + originals.size() + endorsements.size();
+    }
 
 }
 

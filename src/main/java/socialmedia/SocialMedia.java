@@ -1,10 +1,26 @@
 package socialmedia;
 
 import java.io.IOException;
+import java.util.*;
 
 public class SocialMedia implements SocialMediaPlatform {
 
-    public Platform platform = new Platform();
+    public Platform platform;
+
+    public SocialMedia() {
+
+        platform = new Platform();
+
+        Endorsement.setNumberOfEndorsements(0);
+
+        Post.setNumberOfPosts(0);
+
+        Original.setNumberOfOriginals(0);
+
+        Comment.setTotalNumberOfComments(0);
+
+        Account.setNumberOfAccounts(0);
+    }
 
     @Override
     public int createAccount(String handle) throws IllegalHandleException, InvalidHandleException {
@@ -118,73 +134,345 @@ public class SocialMedia implements SocialMediaPlatform {
     @Override
     public String showAccount(String handle) throws HandleNotRecognisedException {
 
-        // TODO - create when basic post framework is in
+        // The account is retrieved
+        Account account = platform.getAccount(handle);
 
-        return null;
+        // If the account is not found the object will be null, so a HandleNotRecognisedException will be thrown
+        if (account == null) throw new HandleNotRecognisedException();
+
+        return String.format("""
+                ID: %o
+                Handle: %s
+                Description: %s
+                Post count: %o
+                Endorse count: %o
+                """, account.getNUMERICAL_IDENTIFIER(), account.getHandle(), account.getDescription(),
+                account.getTotalPosts(), account.getTotalEndorsements());
     }
 
     @Override
     public int createPost(String handle, String message) throws HandleNotRecognisedException, InvalidPostException {
-        if (platform.getAccount(handle) == null) throw new HandleNotRecognisedException();
-        if (message.length() == 0 || message.length() > 100) throw new InvalidPostException();
 
-        Original newOriginal = new Original(handle, message, platform);
-        platform.addPost(newOriginal.uniqueID, newOriginal);
-        platform.setCurrentPostID(platform.getCurrentPostID()+1); //TODO - I feel this would be better in a post super constructor, the code is slightly hard to follow like this
-        return newOriginal.getUniqueID();
+        // Checks if user handle exists on system
+        if (!platform.getAccounts().containsKey(handle)) throw new HandleNotRecognisedException();
+
+        // If message is empty or has more than 100 characters is it invalid
+        if (message.equals("") || message.length() > 100) throw new InvalidPostException();
+
+        // Creates new original
+        Original original = new Original(handle, message);
+
+        // Adds original to platform
+        platform.addOriginal(original);
+
+        // Adds original to Account
+        platform.getAccount(handle).addOriginal(original);
+
+        return original.getId();
+
     }
 
     @Override
     public int endorsePost(String handle, int id)
             throws HandleNotRecognisedException, PostIDNotRecognisedException, NotActionablePostException {
-        if (platform.getAccount(handle) == null) throw new HandleNotRecognisedException();
-        if (platform.getPost(id) == null) throw new PostIDNotRecognisedException();
-        if (platform.checkIfEndorsement(id) == false) throw new NotActionablePostException();
-        if (platform.checkIfEmptyPost(id) == false) throw new NotActionablePostException();
 
-        Endorsement newEndorsement = new Endorsement(handle, id, platform);
-        platform.addPost(newEndorsement.uniqueID, newEndorsement);
-        platform.setCurrentPostID(platform.getCurrentPostID()+1); //TODO - I feel this would be better in a post super constructor, the code is slightly hard to follow like this
-        return newEndorsement.getUniqueID();
+        // Checks if the user exists in the system, throws HandleNotRecognisedException otherwise
+        if (platform.getAccount(handle) == null) throw new HandleNotRecognisedException();
+
+        // Gets the original post, one of these will be null depending on the type of post
+        Original original = platform.getOriginals().get(id);
+        Comment comment = platform.getComments().get(id);
+        Endorsement endorsement = platform.getEndorsements().get(id);
+
+
+        if (original != null) {
+            // If the post is a original:
+
+            // If post is deleted, NotActionablePostException is thrown
+            if (!original.isActionable()) throw new NotActionablePostException();
+
+            //The endorsement object will be created with the original
+            endorsement = new Endorsement(handle, original);
+
+            // The original will have 1 added to numberOfEndorsements
+            original.addEndorsement(endorsement);
+
+            // One will be added to the account total number of endorsements
+            Account account = platform.getAccounts().get( original.getHandle() );
+            account.setTotalEndorsements( account.getTotalEndorsements() + 1);
+        } else if (comment != null) {
+            // If the post is a comment:
+
+            // If post is deleted, NotActionablePostException is thrown
+            if (!comment.isActionable()) throw new NotActionablePostException();
+
+            // The endorsement object will be created with the comment
+            endorsement = new Endorsement(handle, comment);
+
+            // The comment will have 1 added to numberOfEndorsements
+            comment.addEndorsement(endorsement);
+
+            // One will be added to the endorsed accounts total number of endorsements
+            Account account = platform.getAccounts().get( comment.getOriginalPost().getHandle() );
+            account.setTotalEndorsements( account.getTotalEndorsements() + 1);
+        } else if (endorsement != null){
+
+            // If the post is an endorsement a NotActionablePostException is thrown
+            throw new NotActionablePostException();
+        } else {
+
+            // If no post object with the specified id is found a PostIDNotRecognisedException is thrown
+            throw new PostIDNotRecognisedException();
+        }
+
+        // Adds endorsement to system
+        platform.addEndorsement(endorsement);
+
+        // Adds endorsement to Account
+        platform.getAccount(handle).addEndorsement(endorsement);
+
+
+        return endorsement.getId();
+
     }
-// TODO explain why endorsed posts can't be commented on (contradictions)
+
     @Override
     public int commentPost(String handle, int id, String message) throws HandleNotRecognisedException,
             PostIDNotRecognisedException, NotActionablePostException, InvalidPostException {
-        if (platform.getAccount(handle) == null) throw new HandleNotRecognisedException();
-        if (platform.getPost(id) == null) throw new PostIDNotRecognisedException();
-        if (platform.checkIfEmptyPost(id) == false) throw new NotActionablePostException();
-        if (message.length() == 0 || message.length() > 100) throw new InvalidPostException();
 
-        Comment newComment = new Comment(handle, id, message, platform);
-        platform.addPost(newComment.uniqueID, newComment);
-        platform.setCurrentPostID(platform.getCurrentPostID()+1); //TODO - I feel this would be better in a post super constructor, the code is slightly hard to follow like this
-        return newComment.getUniqueID();
+        // If message is empty or greater than 100 character a InvalidPostException is thrown
+        if (message.equals("") || message.length() > 100) throw new InvalidPostException();
+
+        // Account is retrieved from the platform, if no account is found a HandleNotRecognisedException is thrown
+        Account account = platform.getAccount(handle);
+        if (account == null) throw new HandleNotRecognisedException();
+
+        Comment newComment;
+
+        // Gets the post from the systems collections, these objects will be null if they are the wrong type
+        Comment comment = platform.getComments().get(id);
+        Original original = platform.getOriginals().get(id);
+        Endorsement endorsement = platform.getEndorsements().get(id);
+
+        if (comment != null) {
+            // If the post is a comment:
+
+            // If post is deleted, NotActionablePostException is thrown
+            if (!comment.isActionable()) throw new NotActionablePostException();
+
+            // An appropriate Comment object is created
+            newComment = new Comment(handle, comment, message);
+
+            // Original post has 1 added to its numberOfComments
+            comment.addComment(newComment);
+        } else if (original != null) {
+            // If the post is an Original:
+
+            // If post is deleted, NotActionablePostException is thrown
+            if (!original.isActionable()) throw new NotActionablePostException();
+
+            // An appropriate Comment object is created
+            newComment = new Comment(handle, original, message);
+
+            // Original post has 1 added to its numberOfComments
+            original.addComment(newComment);
+        } else if (endorsement != null) {
+
+            // If the post is an endorsement a NotActionablePostException is thrown
+            throw new NotActionablePostException();
+        } else {
+
+            // If the post is not found in the system a PostIDNotRecognisedException is thrown
+            throw new PostIDNotRecognisedException();
+        }
+
+        // Adds comment to the users Account
+        account.addComment(newComment);
+
+        // Adds comment to the platform
+        platform.addComment(newComment);
+
+        return newComment.getId();
     }
 
     @Override
     public void deletePost(int id) throws PostIDNotRecognisedException {
-        if (platform.getPost(id) == null) throw new PostIDNotRecognisedException();
-        Post postToBeDeleted = platform.getPost(id);
-        Post.deletePost(postToBeDeleted, platform);
+
+        // One of these variables will be not null depending on the type of object the post is
+        Original original = platform.getOriginals().get(id);
+        Comment comment = platform.getComments().get(id);
+        Endorsement endorsement = platform.getEndorsements().get(id);
+
+
+        if (original != null) {
+
+            // Gets original posting account
+            Account account = platform.getAccount(original.getHandle());
+
+            // To avoid concurrent modification, endorsements to be removed are added to a HashSet
+            HashSet<Endorsement> endorsementsToRemoveHashSet = account.getEndorsements();
+
+            // So objects can be added the HashSet is converted to an ArrayList
+            ArrayList<Endorsement> endorsementsToRemove = new ArrayList<>(endorsementsToRemoveHashSet);
+
+
+            endorsementsToRemove.addAll(account.getEndorsements());
+            /*
+            for (Endorsement i : account.getEndorsements()) {
+                endorsementsToRemove.add(i);
+            }
+
+             */
+
+            // Endorsements from list endorsementsToRemove are removed from the comment and account
+            for (Endorsement i : endorsementsToRemove) {
+                comment.removeEndorsement(i);
+                account.removeEndorsement(i);
+            }
+
+            // Removes original from Account
+            platform.getAccount(original.getHandle()).removeOriginal(original);
+
+            original.deletePost();
+        } else if (comment != null) {
+
+            // Gets original posting account
+            Account account = platform.getAccount(comment.getHandle());
+
+            // To avoid concurrent modification, endorsements to be removed are added to a HashSet
+            HashSet<Endorsement> endorsementsToRemoveHashSet = account.getEndorsements();
+
+            // So objects can be added the HashSet is converted to an ArrayList
+            ArrayList<Endorsement> endorsementsToRemove = new ArrayList<>(endorsementsToRemoveHashSet);
+
+            endorsementsToRemove.addAll(comment.getEndorsements());
+
+            // Endorsements from list endorsementsToRemove are removed from the comment and account
+            for (Endorsement i : endorsementsToRemove) {
+                comment.removeEndorsement(i);
+                account.removeEndorsement(i);
+            }
+
+            // Removes comment from Account
+            platform.getAccount(comment.getHandle()).removeComment(comment);
+
+            // Original post has one taken off its numberOfComments variable
+            comment.getOriginalPost().removeComment(comment);
+
+            comment.deletePost();
+        } else if (endorsement != null) {
+
+            // Original is retrieved
+            Original endorsedOriginal = platform.getOriginals().get( endorsement.getEndorsedPost().getId() );
+            Comment endorsedComment = platform.getComments().get( endorsement.getEndorsedPost().getId() );
+
+            // The type of object will be tested and one removed from its numberOfEndorsements variable
+            if (endorsedOriginal != null) {
+
+                // The account that was endorsed will have 1 subtracted from the totalEndorsements value
+                Account account = platform.getAccounts().get( endorsedOriginal.getHandle() );
+                account.setTotalEndorsements( account.getTotalEndorsements() - 1);
+
+                // Endorsed object is removed from the accounts list of endorsements
+                endorsedOriginal.removeEndorsement(endorsement);
+            } else if (endorsedComment != null) {
+
+                // The account that was endorsed will have 1 subtracted from the totalEndorsements value
+                Account account = platform.getAccounts().get( endorsedComment.getHandle() );
+                account.setTotalEndorsements( Account.getNumberOfAccounts() - 1);
+
+                // Endorsed object is removed from the accounts list of endorsements
+                endorsedComment.removeEndorsement(endorsement);
+            }
+
+            // Endorsement is removed from account
+            platform.getAccount(endorsement.getHandle()).removeEndorsement(endorsement);
+
+            endorsement.deletePost();
+        } else {
+
+            // If id does not match any post object type then it does not exist, PostIDNotRecognisedException is thrown
+            throw new PostIDNotRecognisedException();
+        }
+
     }
 
     @Override
     public String showIndividualPost(int id) throws PostIDNotRecognisedException {
-        if (platform.getPost(id) == null) throw new PostIDNotRecognisedException();
-        Post post = platform.getPost(id);
-        String stat = "ID: " + post.getUniqueID() + "\n" +
-                "Account: " + post.getPosterHandle() + "\n" +
-                "No. endorsements: " + post.getEndorsements().size() +
-                "No. comments: " + post.getComments().size() + "\n" +
-                post.getMessage();
-        return stat;
+
+        // The post object is assigned to one of these variables depending on the object type
+        Original original = platform.getOriginals().get(id);
+        Comment comment = platform.getComments().get(id);
+        Endorsement endorsement = platform.getEndorsements().get(id);
+
+        String output;
+
+        // The output string will be constructed based on what object type the post is
+        if (original != null) {
+
+            output = String.format("""
+                ID: %o
+                Account: %s
+                No. endorsements: %o | No. comments: %o
+                %s
+                """, original.getId(), original.getHandle(), original.getNumberOfEndorsements(), original.getNumberOfComments(), original.getMessage());
+        } else if (comment != null) {
+
+            output = String.format("""
+                ID: %o
+                Account: %s
+                No. endorsements: %o | No. comments: %o
+                %s
+                """, comment.getId(), comment.getHandle(), comment.getNumberOfEndorsements(), comment.getNumberOfComments(), comment.getMessage());
+        } else if (endorsement != null) {
+
+            //TODO - shouldn't an endorsement show a NotActionable exception???
+
+            output = String.format("""
+                    ID: %o
+                    Account: %s
+                    No. endorsements: 0 | No. comments: 0
+                    %s
+                    """, endorsement.getId(), endorsement.getHandle(), endorsement.getMessage());
+        } else {
+
+            // if all objets are null the post has not been found in the system so a PostIDNotRecognisedException will be thrown
+            throw new PostIDNotRecognisedException();
+        }
+
+        return output;
+
     }
 
     @Override
     public StringBuilder showPostChildrenDetails(int id)
             throws PostIDNotRecognisedException, NotActionablePostException {
-        // TODO Auto-generated method stub
+        // TODO - Needs showIndividualPost() to be working
+
+        // The post is assumed to be an original and retrieved
+        Post post = platform.getOriginals().get(id);
+
+        // If the object is null the post is assumed to be a comment and retrieved
+        if (post == null) {
+            post = platform.getComments().get(id);
+
+            if (post == null) {
+
+                if (platform.getEndorsements().get(id) != null ) {
+
+                    // If the if the ID refers to an endorsement post (is not null), a NotActionablePostException is thrown
+                    throw new NotActionablePostException();
+                } else {
+
+                    // If it is not an endorsement (is null), the post does not exist in the system, so a PostIDNotRecognisedException is thrown
+                    throw new PostIDNotRecognisedException();
+                }
+            }
+
+
+        }
+
+
         return null;
     }
 
@@ -196,57 +484,116 @@ public class SocialMedia implements SocialMediaPlatform {
     }
 
     @Override
-    public int getTotalOriginalPosts() { // TODO - Maybe we could have separate HashMaps for the types of posts?
-        int noOfOriginals = 0;
-        for (Post post : platform.getPosts().values()) {
-            if (post.getClass() == Original.class) {
-                noOfOriginals += 1;
-            }
-        }
-        return noOfOriginals;
+    public int getTotalOriginalPosts() {
+
+        return Original.getNumberOfPosts();
     }
 
     @Override
-    public int getTotalEndorsmentPosts() { // TODO - Maybe we could have separate HashMaps for the types of posts?
-        int noOfEndorsements = 0;
-        for (Post post : platform.getPosts().values()) {
-            if (post.getClass() == Endorsement.class) {
-                noOfEndorsements += 1;
-            }
-        }
-        return noOfEndorsements;
+    public int getTotalEndorsmentPosts() {
+
+        return Endorsement.getNumberOfEndorsements();
     }
 
     @Override
-    public int getTotalCommentPosts() { // TODO - Maybe we could have separate HashMaps for the types of posts?
-        int noOfComments = 0;
-        for (Post post : platform.getPosts().values()) {
-            if (post.getClass() == Comment.class) {
-                noOfComments += 1;
-            }
-        }
-        return noOfComments;
+    public int getTotalCommentPosts() {
+
+        return Comment.getTotalNumberOfComments();
     }
 
     @Override
     public int getMostEndorsedPost() {
-        int noOfEndorsements = -1;
-        Post mostEndorsedPost = null;
-        for (Post post : platform.getPosts().values()) {
-            if (post.getEndorsements() != null); { //TODO - Are you sure an empty HashMap returns null? I know about the existence of java.util.Collections.emptyMap()
-                if (post.getEndorsements().size() > noOfEndorsements) { // TODO - HashMap.size() may produce a NullPointerException (Should we try-catch this?)
-                    noOfEndorsements = post.getEndorsements().size();
-                    mostEndorsedPost = post;
+
+        Original original = platform.getOriginals().get(0);
+        Comment comment = platform.getComments().get(0);
+
+        // If there is at least one original
+        if (original != null) {
+
+            // All originals will be tested
+            for (Original i : platform.getOriginals().values()) {
+
+                // If i is has more endorsements then original, original will be set as i
+                if (i.getNumberOfEndorsements() > original.getNumberOfEndorsements()) {
+                    original = i;
                 }
             }
         }
-        return mostEndorsedPost.getUniqueID(); //TODO - Post.getUniqueID may produce NullPointerException (should we try-catch this?)
+
+        // If there is at least one comment
+        if (comment != null) {
+
+            // All comments will be tested
+            for (Comment i : platform.getComments().values()) {
+
+                // If i has more endorsements than comment, comment will be set as i
+                if (i.getNumberOfEndorsements() > comment.getNumberOfEndorsements()) {
+                    comment = i;
+                }
+            }
+        }
+
+        // 0 will be returned if there are no posts
+        // If one is null and the other is not, the not not null objects ID will be returned
+        if (original == null && comment == null) {
+            return 0;
+        } else if (original != null && comment == null) {
+            return original.getId();
+        } else if (comment != null && original == null) {
+            return comment.getId();
+        }
+
+        // The most endorsed out of comment and original will be returned
+        if (original.getNumberOfEndorsements() > comment.getNumberOfEndorsements()) {
+            return original.getId();
+        } else {
+            return comment.getId();
+        }
+
     }
 
     @Override
     public int getMostEndorsedAccount() {
-        // TODO Auto-generated method stub
-        return 0;
+
+        Map.Entry<String, Account> mostEndorsedAccount = platform.getAccounts().entrySet().stream().toList().get(0);
+
+        // Accounts are checked
+        for (Map.Entry<String, Account> i : platform.getAccounts().entrySet()) {
+
+            // If i has more endorsements than mostEndorsedAccount, mostEndorsedAccount is set as i
+            if (i.getValue().getTotalEndorsements() > mostEndorsedAccount.getValue().getTotalEndorsements()) {
+                mostEndorsedAccount = i;
+            }
+        }
+
+        // The ID of the account with most endorsements is returned
+        return mostEndorsedAccount.getValue().getNUMERICAL_IDENTIFIER();
+
+        /*
+        Account mostEndorsedAccount = (Account) platform.getAccounts().values().toArray()[0];
+
+        // If there are no accounts 0 will be returned
+        if (mostEndorsedAccount == null) return 0;
+
+        // All accounts will be checked
+        for (Account i : platform.getAccounts().values()) {
+
+            int totalEndorsements = 0;
+
+            // Each account will have all comments and originals checked and number of endorsements will be summed
+            for (Original j : i.getOriginals().stream().toList()) {
+
+                totalEndorsements += j.getNumberOfEndorsements();
+            }
+
+            for (Comment j : i.getComments().stream().toList()) {
+
+                totalEndorsements += j.getNumberOfEndorsements();
+            }
+
+            if (totalEndorsements > mostEndorsedAccount)
+        }
+        */
     }
 
     @Override
