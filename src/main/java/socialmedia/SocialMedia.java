@@ -1,7 +1,7 @@
 package socialmedia;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.*;
 
 public class SocialMedia implements SocialMediaPlatform {
 
@@ -134,9 +134,20 @@ public class SocialMedia implements SocialMediaPlatform {
     @Override
     public String showAccount(String handle) throws HandleNotRecognisedException {
 
-        // TODO - create when basic post framework is in
+        // The account is retrieved
+        Account account = platform.getAccount(handle);
 
-        return null;
+        // If the account is not found the object will be null, so a HandleNotRecognisedException will be thrown
+        if (account == null) throw new HandleNotRecognisedException();
+
+        return String.format("""
+                ID: %o
+                Handle: %s
+                Description: %s
+                Post count: %o
+                Endorse count: %o
+                """, account.getNUMERICAL_IDENTIFIER(), account.getHandle(), account.getDescription(),
+                account.getTotalPosts(), account.getTotalEndorsements());
     }
 
     @Override
@@ -184,7 +195,7 @@ public class SocialMedia implements SocialMediaPlatform {
             endorsement = new Endorsement(handle, original);
 
             // The original will have 1 added to numberOfEndorsements
-            original.addEndorsement();
+            original.addEndorsement(endorsement);
 
             // One will be added to the account total number of endorsements
             Account account = platform.getAccounts().get( original.getHandle() );
@@ -199,7 +210,7 @@ public class SocialMedia implements SocialMediaPlatform {
             endorsement = new Endorsement(handle, comment);
 
             // The comment will have 1 added to numberOfEndorsements
-            comment.addEndorsement();
+            comment.addEndorsement(endorsement);
 
             // One will be added to the endorsed accounts total number of endorsements
             Account account = platform.getAccounts().get( comment.getOriginalPost().getHandle() );
@@ -292,13 +303,61 @@ public class SocialMedia implements SocialMediaPlatform {
         Comment comment = platform.getComments().get(id);
         Endorsement endorsement = platform.getEndorsements().get(id);
 
+
         if (original != null) {
+
+            // Gets original posting account
+            Account account = platform.getAccount(original.getHandle());
+
+            // To avoid concurrent modification, endorsements to be removed are added to a HashSet
+            HashSet<Endorsement> endorsementsToRemoveHashSet = account.getEndorsements();
+
+            // So objects can be added the HashSet is converted to an ArrayList
+            ArrayList<Endorsement> endorsementsToRemove = new ArrayList<>(endorsementsToRemoveHashSet);
+
+
+            endorsementsToRemove.addAll(account.getEndorsements());
+            /*
+            for (Endorsement i : account.getEndorsements()) {
+                endorsementsToRemove.add(i);
+            }
+
+             */
+
+            // Endorsements from list endorsementsToRemove are removed from the comment and account
+            for (Endorsement i : endorsementsToRemove) {
+                comment.removeEndorsement(i);
+                account.removeEndorsement(i);
+            }
+
+            // Removes original from Account
+            platform.getAccount(original.getHandle()).removeOriginal(original);
 
             original.deletePost();
         } else if (comment != null) {
 
+            // Gets original posting account
+            Account account = platform.getAccount(comment.getHandle());
+
+            // To avoid concurrent modification, endorsements to be removed are added to a HashSet
+            HashSet<Endorsement> endorsementsToRemoveHashSet = account.getEndorsements();
+
+            // So objects can be added the HashSet is converted to an ArrayList
+            ArrayList<Endorsement> endorsementsToRemove = new ArrayList<>(endorsementsToRemoveHashSet);
+
+            endorsementsToRemove.addAll(comment.getEndorsements());
+
+            // Endorsements from list endorsementsToRemove are removed from the comment and account
+            for (Endorsement i : endorsementsToRemove) {
+                comment.removeEndorsement(i);
+                account.removeEndorsement(i);
+            }
+
+            // Removes comment from Account
+            platform.getAccount(comment.getHandle()).removeComment(comment);
+
             // Original post has one taken off its numberOfComments variable
-            comment.getOriginalPost().removeComment();
+            comment.getOriginalPost().removeComment(comment);
 
             comment.deletePost();
         } else if (endorsement != null) {
@@ -315,7 +374,7 @@ public class SocialMedia implements SocialMediaPlatform {
                 account.setTotalEndorsements( account.getTotalEndorsements() - 1);
 
                 // Endorsed object is removed from the accounts list of endorsements
-                endorsedOriginal.removeEndorsement();
+                endorsedOriginal.removeEndorsement(endorsement);
             } else if (endorsedComment != null) {
 
                 // The account that was endorsed will have 1 subtracted from the totalEndorsements value
@@ -323,8 +382,11 @@ public class SocialMedia implements SocialMediaPlatform {
                 account.setTotalEndorsements( Account.getNumberOfAccounts() - 1);
 
                 // Endorsed object is removed from the accounts list of endorsements
-                endorsedComment.removeEndorsement();
+                endorsedComment.removeEndorsement(endorsement);
             }
+
+            // Endorsement is removed from account
+            platform.getAccount(endorsement.getHandle()).removeEndorsement(endorsement);
 
             endorsement.deletePost();
         } else {
@@ -385,7 +447,32 @@ public class SocialMedia implements SocialMediaPlatform {
     @Override
     public StringBuilder showPostChildrenDetails(int id)
             throws PostIDNotRecognisedException, NotActionablePostException {
-        // TODO Auto-generated method stub
+        // TODO - Needs showIndividualPost() to be working
+
+        // The post is assumed to be an original and retrieved
+        Post post = platform.getOriginals().get(id);
+
+        // If the object is null the post is assumed to be a comment and retrieved
+        if (post == null) {
+            post = platform.getComments().get(id);
+
+            if (post == null) {
+
+                if (platform.getEndorsements().get(id) != null ) {
+
+                    // If the if the ID refers to an endorsement post (is not null), a NotActionablePostException is thrown
+                    throw new NotActionablePostException();
+                } else {
+
+                    // If it is not an endorsement (is null), the post does not exist in the system, so a PostIDNotRecognisedException is thrown
+                    throw new PostIDNotRecognisedException();
+                }
+            }
+
+
+        }
+
+
         return null;
     }
 

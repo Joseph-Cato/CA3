@@ -13,12 +13,18 @@ public class Original extends Post {
 
     private ArrayList<Comment> comments = new ArrayList<>();
 
+    private ArrayList<Endorsement> endorsements = new ArrayList<>();
+
     public Original(String handle, String message) {
         super(handle);
 
         this.message = message;
 
         numberOfOriginals += 1;
+    }
+
+    public ArrayList<Endorsement> getEndorsements() {
+        return endorsements;
     }
 
     public static void setNumberOfOriginals(int value) {
@@ -57,11 +63,17 @@ public class Original extends Post {
         return numberOfEndorsements;
     }
 
-    public void addEndorsement(){
+    public void addEndorsement(Endorsement endorsement){
+
+        endorsements.add(endorsement);
+
         numberOfEndorsements += 1;
     }
 
-    public void removeEndorsement() {
+    public void removeEndorsement(Endorsement endorsement) {
+
+        endorsements.add(endorsement);
+
         numberOfEndorsements -= 1;
     }
 
@@ -76,7 +88,10 @@ public class Original extends Post {
         numberOfComments += 1;
     }
 
-    public void removeComment() {
+    public void removeComment(Comment comment) {
+
+        comments.add(comment);
+
         numberOfComments -= 1;
     }
 }

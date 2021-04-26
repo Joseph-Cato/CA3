@@ -316,8 +316,63 @@ public class SocialMediaTest {
     @Test
     public void showAccountTest() {
 
-        // TODO - create when basic post framework is in
+        try {
 
+            String expected1 = """
+                    ID: 0
+                    Handle: 1
+                    Description: first account
+                    Post count: 4
+                    Endorse count: 2
+                    """;
+
+            String expected2 = """
+                    ID: 0
+                    Handle: 1
+                    Description: first account
+                    Post count: 2
+                    Endorse count: 1
+                    """;
+
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("1", "first account");
+
+            sm.createPost("1", "post 0");
+
+            sm.commentPost("1", 0, "post 1 (comment)");
+
+            sm.endorsePost("1", 0); // post 2
+
+            sm.endorsePost("1", 1); // post 3
+
+            Assert.assertEquals(expected1, sm.showAccount("1"));
+
+            sm.deletePost(1); // TODO - Deleting comment what happens to endorsement?
+
+            Assert.assertEquals(expected2, sm.showAccount("1"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Test
+    public void showAccountBadHandleTest() {
+
+        try {
+
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("ben");
+
+            Assert.assertThrows(HandleNotRecognisedException.class, () -> sm.showAccount("hi"));
+            Assert.assertThrows(HandleNotRecognisedException.class, () -> sm.showAccount(""));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /*
@@ -882,5 +937,6 @@ public class SocialMediaTest {
             e.printStackTrace();
         }
     }
+
 
 }

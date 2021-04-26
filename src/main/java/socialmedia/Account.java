@@ -65,7 +65,7 @@ public class Account {
         originals.add(original);
     }
 
-    public void removeoriginal(Original original) {
+    public void removeOriginal(Original original) {
         originals.remove(original);
     }
 
@@ -109,6 +109,9 @@ public class Account {
         this.handle = handle;
     }
 
+    public int getTotalPosts() {
+        return comments.size() + originals.size() + endorsements.size();
+    }
 
 }
 
