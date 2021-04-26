@@ -199,6 +199,9 @@ public class SocialMedia implements SocialMediaPlatform {
             // Original has the endorsement added
             original.addEndorsement(endorsement);
 
+            // Account that posted original has 1 added to it's totalEndorsementsReceived value
+            platform.getAccount(original.getHandle()).addEndorsementsReceived();
+
         } else if (comment != null) {
             // If the post is a comment:
 
@@ -210,6 +213,9 @@ public class SocialMedia implements SocialMediaPlatform {
 
             // Comment has the endorsement added
             comment.addEndorsement(endorsement);
+
+            // Account that posted comment has 1 added to it's totalEndorsementsReceived value
+            platform.getAccount(comment.getHandle()).addEndorsementsReceived();
 
         } else if (endorsement != null){
 
@@ -262,6 +268,9 @@ public class SocialMedia implements SocialMediaPlatform {
             // An appropriate Comment object is created
             newComment = new Comment(handle, comment, message);
 
+            // comment has new comment added
+            comment.addComment(newComment);
+
         } else if (original != null) {
             // If the post is an Original:
 
@@ -270,6 +279,9 @@ public class SocialMedia implements SocialMediaPlatform {
 
             // An appropriate Comment object is created
             newComment = new Comment(handle, original, message);
+
+            // Original has new comment added
+            original.addComment(newComment);
 
         } else if (endorsement != null) {
 
@@ -282,10 +294,10 @@ public class SocialMedia implements SocialMediaPlatform {
         }
 
         // Comment is added to account
-        account.addComment(comment);
+        account.addComment(newComment);
 
         // Comment is added to platform
-        platform.addComment(comment);
+        platform.addComment(newComment);
 
         return newComment.getId();
     }
