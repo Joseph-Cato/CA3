@@ -900,7 +900,7 @@ public class SocialMediaTest {
             sm.endorsePost("2", 1);
             sm.endorsePost("3", 1);
 
-            Assert.assertEquals(sm.platform.getOriginals().get(1).getId(), sm.getMostEndorsedPost());
+            Assert.assertEquals(1, sm.getMostEndorsedPost());
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -19,6 +19,8 @@ public class Post {
 
         handle = null;
 
+        numberOfPosts -= 1;
+
     }
 
     public static void setNumberOfPosts(int numberOfPosts) {

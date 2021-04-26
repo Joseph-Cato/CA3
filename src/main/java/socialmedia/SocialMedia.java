@@ -147,7 +147,7 @@ public class SocialMedia implements SocialMediaPlatform {
                 Post count: %o
                 Endorse count: %o
                 """, account.getNUMERICAL_IDENTIFIER(), account.getHandle(), account.getDescription(),
-                account.getTotalPosts(), account.getTotalEndorsements());
+                account.getTotalPosts(), account.getTotalEndorsementsReceived());
     }
 
     @Override
@@ -162,11 +162,14 @@ public class SocialMedia implements SocialMediaPlatform {
         // Creates new original
         Original original = new Original(handle, message);
 
+        // Gets account from platform
+        Account account = platform.getAccount(handle);
+
+        // Adds original to account
+        account.addOriginal(original);
+
         // Adds original to platform
         platform.addOriginal(original);
-
-        // Adds original to Account
-        platform.getAccount(handle).addOriginal(original);
 
         return original.getId();
 
@@ -184,22 +187,18 @@ public class SocialMedia implements SocialMediaPlatform {
         Comment comment = platform.getComments().get(id);
         Endorsement endorsement = platform.getEndorsements().get(id);
 
-
         if (original != null) {
             // If the post is a original:
 
             // If post is deleted, NotActionablePostException is thrown
             if (!original.isActionable()) throw new NotActionablePostException();
 
-            //The endorsement object will be created with the original
+            // The endorsement object will be created with the original
             endorsement = new Endorsement(handle, original);
 
-            // The original will have 1 added to numberOfEndorsements
+            // Original has the endorsement added
             original.addEndorsement(endorsement);
 
-            // One will be added to the account total number of endorsements
-            Account account = platform.getAccounts().get( original.getHandle() );
-            account.setTotalEndorsements( account.getTotalEndorsements() + 1);
         } else if (comment != null) {
             // If the post is a comment:
 
@@ -209,12 +208,9 @@ public class SocialMedia implements SocialMediaPlatform {
             // The endorsement object will be created with the comment
             endorsement = new Endorsement(handle, comment);
 
-            // The comment will have 1 added to numberOfEndorsements
+            // Comment has the endorsement added
             comment.addEndorsement(endorsement);
 
-            // One will be added to the endorsed accounts total number of endorsements
-            Account account = platform.getAccounts().get( comment.getOriginalPost().getHandle() );
-            account.setTotalEndorsements( account.getTotalEndorsements() + 1);
         } else if (endorsement != null){
 
             // If the post is an endorsement a NotActionablePostException is thrown
@@ -225,11 +221,14 @@ public class SocialMedia implements SocialMediaPlatform {
             throw new PostIDNotRecognisedException();
         }
 
+        // Gets account that is endorsing
+        Account account = platform.getAccount(handle);
+
+        // Adds endorsement to account
+        account.addEndorsement(endorsement);
+
         // Adds endorsement to system
         platform.addEndorsement(endorsement);
-
-        // Adds endorsement to Account
-        platform.getAccount(handle).addEndorsement(endorsement);
 
 
         return endorsement.getId();
@@ -263,8 +262,6 @@ public class SocialMedia implements SocialMediaPlatform {
             // An appropriate Comment object is created
             newComment = new Comment(handle, comment, message);
 
-            // Original post has 1 added to its numberOfComments
-            comment.addComment(newComment);
         } else if (original != null) {
             // If the post is an Original:
 
@@ -274,8 +271,6 @@ public class SocialMedia implements SocialMediaPlatform {
             // An appropriate Comment object is created
             newComment = new Comment(handle, original, message);
 
-            // Original post has 1 added to its numberOfComments
-            original.addComment(newComment);
         } else if (endorsement != null) {
 
             // If the post is an endorsement a NotActionablePostException is thrown
@@ -286,11 +281,11 @@ public class SocialMedia implements SocialMediaPlatform {
             throw new PostIDNotRecognisedException();
         }
 
-        // Adds comment to the users Account
-        account.addComment(newComment);
+        // Comment is added to account
+        account.addComment(comment);
 
-        // Adds comment to the platform
-        platform.addComment(newComment);
+        // Comment is added to platform
+        platform.addComment(comment);
 
         return newComment.getId();
     }
@@ -317,23 +312,28 @@ public class SocialMedia implements SocialMediaPlatform {
 
 
             endorsementsToRemove.addAll(account.getEndorsements());
-            /*
-            for (Endorsement i : account.getEndorsements()) {
-                endorsementsToRemove.add(i);
-            }
-
-             */
 
             // Endorsements from list endorsementsToRemove are removed from the comment and account
             for (Endorsement i : endorsementsToRemove) {
-                comment.removeEndorsement(i);
+
+                // Endorsement is removed from account
                 account.removeEndorsement(i);
+
+                // Endorsement is removed from system
+                platform.removeEndorsement(i);
+
+                // Endorsed account has 1 taken of its totalEndorsementsReceived value
+                platform.getAccount( original.getHandle() ).removeEndorsementsReceived();
+
+                // Post is deleted
+                deletePost(i.getId());
             }
 
             // Removes original from Account
-            platform.getAccount(original.getHandle()).removeOriginal(original);
+            account.removeOriginal(original);
 
             original.deletePost();
+
         } else if (comment != null) {
 
             // Gets original posting account
@@ -349,17 +349,25 @@ public class SocialMedia implements SocialMediaPlatform {
 
             // Endorsements from list endorsementsToRemove are removed from the comment and account
             for (Endorsement i : endorsementsToRemove) {
-                comment.removeEndorsement(i);
+
+                // Endorsement is removed from account
                 account.removeEndorsement(i);
+
+                // Endorsement is removed from system
+                platform.removeEndorsement(i);
+
+                // Endorsed account has 1 taken of its totalEndorsementsReceived value
+                platform.getAccount( comment.getHandle() ).removeEndorsementsReceived();
+
+                // Post is deleted
+                deletePost(i.getId());
             }
 
             // Removes comment from Account
-            platform.getAccount(comment.getHandle()).removeComment(comment);
-
-            // Original post has one taken off its numberOfComments variable
-            comment.getOriginalPost().removeComment(comment);
+            account.removeComment(comment);
 
             comment.deletePost();
+
         } else if (endorsement != null) {
 
             // Original is retrieved
@@ -369,26 +377,29 @@ public class SocialMedia implements SocialMediaPlatform {
             // The type of object will be tested and one removed from its numberOfEndorsements variable
             if (endorsedOriginal != null) {
 
-                // The account that was endorsed will have 1 subtracted from the totalEndorsements value
+                // The account that was endorsed will have 1 subtracted from the totalEndorsementsReceived value
                 Account account = platform.getAccounts().get( endorsedOriginal.getHandle() );
-                account.setTotalEndorsements( account.getTotalEndorsements() - 1);
+                account.removeEndorsementsReceived();
 
                 // Endorsed object is removed from the accounts list of endorsements
                 endorsedOriginal.removeEndorsement(endorsement);
+
             } else if (endorsedComment != null) {
 
                 // The account that was endorsed will have 1 subtracted from the totalEndorsements value
                 Account account = platform.getAccounts().get( endorsedComment.getHandle() );
-                account.setTotalEndorsements( Account.getNumberOfAccounts() - 1);
+                account.removeEndorsementsReceived();
 
                 // Endorsed object is removed from the accounts list of endorsements
                 endorsedComment.removeEndorsement(endorsement);
+
             }
 
             // Endorsement is removed from account
             platform.getAccount(endorsement.getHandle()).removeEndorsement(endorsement);
 
             endorsement.deletePost();
+
         } else {
 
             // If id does not match any post object type then it does not exist, PostIDNotRecognisedException is thrown
@@ -561,7 +572,7 @@ public class SocialMedia implements SocialMediaPlatform {
         for (Map.Entry<String, Account> i : platform.getAccounts().entrySet()) {
 
             // If i has more endorsements than mostEndorsedAccount, mostEndorsedAccount is set as i
-            if (i.getValue().getTotalEndorsements() > mostEndorsedAccount.getValue().getTotalEndorsements()) {
+            if (i.getValue().getTotalEndorsementsReceived() > mostEndorsedAccount.getValue().getTotalEndorsementsReceived()) {
                 mostEndorsedAccount = i;
             }
         }
