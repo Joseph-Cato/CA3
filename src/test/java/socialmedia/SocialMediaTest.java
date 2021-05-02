@@ -65,8 +65,6 @@ public class SocialMediaTest {
     @Test
     public void removeAccountTest() {
 
-        //TODO - check posts are removed
-
         SocialMedia sm = new SocialMedia();
 
         Account.resetNumberOfAccounts();
@@ -101,8 +99,6 @@ public class SocialMediaTest {
 
     @Test
     public void removeAccountBadIdTest() {
-
-        //TODO - check posts remain intact
 
         SocialMedia sm = new SocialMedia();
 
@@ -346,9 +342,11 @@ public class SocialMediaTest {
 
             sm.endorsePost("1", 1); // post 3
 
+            Account account = sm.platform.getAccount("1");
+
             Assert.assertEquals(expected1, sm.showAccount("1"));
 
-            sm.deletePost(1); // TODO - Deleting comment what happens to endorsement?
+            sm.deletePost(1);
 
             Assert.assertEquals(expected2, sm.showAccount("1"));
 
@@ -900,7 +898,7 @@ public class SocialMediaTest {
             sm.endorsePost("2", 1);
             sm.endorsePost("3", 1);
 
-            Assert.assertEquals(sm.platform.getOriginals().get(1).getId(), sm.getMostEndorsedPost());
+            Assert.assertEquals(1, sm.getMostEndorsedPost());
 
         } catch (Exception e) {
             e.printStackTrace();

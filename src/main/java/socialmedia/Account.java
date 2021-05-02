@@ -12,11 +12,13 @@ public class Account {
 
     private String description;
 
-    private int totalEndorsements = 0;
+    private int totalEndorsementsReceived = 0;
 
-    private HashSet<Comment> comments = new HashSet<Comment>();
+    private int totalPosts = 0;
 
     private HashSet<Original> originals = new HashSet<Original>();
+
+    private HashSet<Comment> comments = new HashSet<Comment>();
 
     private HashSet<Endorsement> endorsements = new HashSet<Endorsement>();
 
@@ -37,44 +39,61 @@ public class Account {
 
     }
 
-    public HashSet<Comment> getComments() {
-        return comments;
+    public void addEndorsementsReceived() {
+
+        totalEndorsementsReceived += 1;
     }
 
-    public HashSet<Original> getOriginals() {
-        return originals;
+    public void removeEndorsementsReceived() {
+
+        totalEndorsementsReceived -= 1;
     }
 
-    public void setTotalEndorsements(int value) {
-        totalEndorsements = value;
-    }
-
-    public int getTotalEndorsements() {
-        return totalEndorsements;
+    public int getTotalEndorsementsReceived() {
+        return totalEndorsementsReceived;
     }
 
     public void addComment(Comment comment) {
+
         comments.add(comment);
+
+        totalPosts += 1;
     }
 
     public void removeComment(Comment comment) {
+
         comments.remove(comment);
+
+        totalPosts -= 1;
     }
 
     public void addOriginal(Original original) {
+
         originals.add(original);
+
+        totalPosts += 1;
+
     }
 
     public void removeOriginal(Original original) {
+
         originals.remove(original);
+
+        totalPosts -= 1;
     }
 
     public void addEndorsement(Endorsement endorsement) {
+
         endorsements.add(endorsement);
+
+        totalPosts += 1;
     }
 
     public void removeEndorsement(Endorsement endorsement) {
+
         endorsements.remove(endorsement);
+
+        totalPosts -= 1;
     }
 
     public HashSet<Endorsement> getEndorsements() {
@@ -110,7 +129,7 @@ public class Account {
     }
 
     public int getTotalPosts() {
-        return comments.size() + originals.size() + endorsements.size();
+        return totalPosts;
     }
 
 }

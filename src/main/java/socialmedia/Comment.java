@@ -1,6 +1,5 @@
 package socialmedia;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Comment extends Post {
@@ -13,9 +12,9 @@ public class Comment extends Post {
 
     private static int totalNumberOfComments = 0;
 
-    private ArrayList<Comment> comments = new ArrayList<>();
+    private HashSet<Comment> comments = new HashSet<Comment>();
 
-    private ArrayList<Endorsement> endorsements = new ArrayList<>();
+    private HashSet<Endorsement> endorsements = new HashSet<Endorsement>();
 
 
     public Comment(String handle, Original original, String message) {
@@ -77,7 +76,7 @@ public class Comment extends Post {
         return numberOfEndorsements;
     }
 
-    public ArrayList<Endorsement> getEndorsements() {
+    public HashSet<Endorsement> getEndorsements() {
         return endorsements;
     }
 

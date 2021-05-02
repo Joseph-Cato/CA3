@@ -1,6 +1,6 @@
 package socialmedia;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Original extends Post {
 
@@ -11,9 +11,9 @@ public class Original extends Post {
 
     private static int numberOfOriginals = 0;
 
-    private ArrayList<Comment> comments = new ArrayList<>();
+    private HashSet<Comment> comments = new HashSet<Comment>();
 
-    private ArrayList<Endorsement> endorsements = new ArrayList<>();
+    private HashSet<Endorsement> endorsements = new HashSet<Endorsement>();
 
     public Original(String handle, String message) {
         super(handle);
@@ -23,7 +23,7 @@ public class Original extends Post {
         numberOfOriginals += 1;
     }
 
-    public ArrayList<Endorsement> getEndorsements() {
+    public HashSet<Endorsement> getEndorsements() {
         return endorsements;
     }
 

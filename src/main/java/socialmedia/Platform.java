@@ -47,6 +47,10 @@ public class Platform {
         endorsements.put(endorsement.getId(), endorsement);
     }
 
+    void removeEndorsement(Endorsement endorsement) {
+        endorsements.remove(endorsement.getId(), endorsement);
+    }
+
     HashMap<Integer, Original> getOriginals() {
         return originals;
     }
