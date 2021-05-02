@@ -342,6 +342,8 @@ public class SocialMediaTest {
 
             sm.endorsePost("1", 1); // post 3
 
+            Account account = sm.platform.getAccount("1");
+
             Assert.assertEquals(expected1, sm.showAccount("1"));
 
             sm.deletePost(1);

@@ -203,6 +203,7 @@ public class SocialMedia implements SocialMediaPlatform {
             platform.getAccount(original.getHandle()).addEndorsementsReceived();
 
         } else if (comment != null) {
+
             // If the post is a comment:
 
             // If post is deleted, NotActionablePostException is thrown
@@ -317,7 +318,7 @@ public class SocialMedia implements SocialMediaPlatform {
             Account account = platform.getAccount(original.getHandle());
 
             // To avoid concurrent modification, endorsements to be removed are added to a HashSet
-            HashSet<Endorsement> endorsementsToRemoveHashSet = account.getEndorsements();
+            HashSet<Endorsement> endorsementsToRemoveHashSet = original.getEndorsements();
 
             // So objects can be added the HashSet is converted to an ArrayList
             ArrayList<Endorsement> endorsementsToRemove = new ArrayList<>(endorsementsToRemoveHashSet);
@@ -337,8 +338,7 @@ public class SocialMedia implements SocialMediaPlatform {
                 // Endorsed account has 1 taken of its totalEndorsementsReceived value
                 platform.getAccount( original.getHandle() ).removeEndorsementsReceived();
 
-                // Post is deleted
-                deletePost(i.getId());
+
             }
 
             // Removes original from Account
@@ -352,18 +352,18 @@ public class SocialMedia implements SocialMediaPlatform {
             Account account = platform.getAccount(comment.getHandle());
 
             // To avoid concurrent modification, endorsements to be removed are added to a HashSet
-            HashSet<Endorsement> endorsementsToRemoveHashSet = account.getEndorsements();
+            HashSet<Endorsement> endorsementsToRemoveHashSet = comment.getEndorsements();
 
             // So objects can be added the HashSet is converted to an ArrayList
             ArrayList<Endorsement> endorsementsToRemove = new ArrayList<>(endorsementsToRemoveHashSet);
 
-            endorsementsToRemove.addAll(comment.getEndorsements());
-
             // Endorsements from list endorsementsToRemove are removed from the comment and account
             for (Endorsement i : endorsementsToRemove) {
 
+                Account endorsementAccount =  platform.getAccount(i.getHandle());
+
                 // Endorsement is removed from account
-                account.removeEndorsement(i);
+                endorsementAccount.removeEndorsement(i);
 
                 // Endorsement is removed from system
                 platform.removeEndorsement(i);
@@ -371,8 +371,6 @@ public class SocialMedia implements SocialMediaPlatform {
                 // Endorsed account has 1 taken of its totalEndorsementsReceived value
                 platform.getAccount( comment.getHandle() ).removeEndorsementsReceived();
 
-                // Post is deleted
-                deletePost(i.getId());
             }
 
             // Removes comment from Account

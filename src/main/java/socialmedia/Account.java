@@ -40,10 +40,12 @@ public class Account {
     }
 
     public void addEndorsementsReceived() {
+
         totalEndorsementsReceived += 1;
     }
 
     public void removeEndorsementsReceived() {
+
         totalEndorsementsReceived -= 1;
     }
 
@@ -52,18 +54,21 @@ public class Account {
     }
 
     public void addComment(Comment comment) {
+
         comments.add(comment);
 
         totalPosts += 1;
     }
 
     public void removeComment(Comment comment) {
+
         comments.remove(comment);
 
         totalPosts -= 1;
     }
 
     public void addOriginal(Original original) {
+
         originals.add(original);
 
         totalPosts += 1;
