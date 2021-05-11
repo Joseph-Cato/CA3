@@ -6,7 +6,6 @@ public class Comment extends Post {
 
     private String message;
     private Post originalPost;
-    private boolean actionable = true;
     private int numberOfEndorsements;
     private int numberOfComments;
 
@@ -19,6 +18,8 @@ public class Comment extends Post {
 
     public Comment(String handle, Original original, String message) {
         super(handle);
+
+        actionable = true;
 
         originalPost = original;
         this.message = message;
@@ -66,10 +67,6 @@ public class Comment extends Post {
 
         totalNumberOfComments -= 1;
 
-    }
-
-    public boolean isActionable() {
-        return actionable;
     }
 
     public int getNumberOfEndorsements() {

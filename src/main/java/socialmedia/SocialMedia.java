@@ -468,7 +468,6 @@ public class SocialMedia implements SocialMediaPlatform {
     @Override
     public StringBuilder showPostChildrenDetails(int id)
             throws PostIDNotRecognisedException, NotActionablePostException {
-        // TODO - Needs showIndividualPost() to be working
 
         // The post is assumed to be an original and retrieved
         Post post = platform.getOriginals().get(id);
@@ -490,8 +489,10 @@ public class SocialMedia implements SocialMediaPlatform {
                 }
             }
 
-
         }
+
+        // Checks if post is actionable (False if it has been deleted)
+        if (!post.isActionable()) throw new NotActionablePostException();
 
 
         return null;

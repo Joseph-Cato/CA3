@@ -7,7 +7,7 @@ public class Original extends Post {
     private String message;
     private int numberOfEndorsements = 0;
     private int numberOfComments = 0;
-    private boolean actionable = true;
+
 
     private static int numberOfOriginals = 0;
 
@@ -17,6 +17,8 @@ public class Original extends Post {
 
     public Original(String handle, String message) {
         super(handle);
+
+        actionable = true;
 
         this.message = message;
 
@@ -53,10 +55,6 @@ public class Original extends Post {
         actionable = false;
 
         numberOfOriginals -= 1;
-    }
-
-    public boolean isActionable() {
-        return actionable;
     }
 
     public int getNumberOfEndorsements() {

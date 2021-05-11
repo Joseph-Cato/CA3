@@ -5,6 +5,7 @@ public class Post {
     private static int numberOfPosts = 0;
     private int id;
     private String handle;
+    public boolean actionable;
 
     public Post(String handle) {
 
@@ -21,6 +22,10 @@ public class Post {
 
         numberOfPosts -= 1;
 
+    }
+
+    public boolean isActionable() {
+        return actionable;
     }
 
     public static void setNumberOfPosts(int numberOfPosts) {
