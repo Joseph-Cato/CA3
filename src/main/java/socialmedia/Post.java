@@ -13,7 +13,6 @@ public class Post {
         this.id = numberOfPosts;
 
         numberOfPosts += 1;
-
     }
 
     public void deletePost() {
@@ -30,6 +29,10 @@ public class Post {
 
     public static void setNumberOfPosts(int numberOfPosts) {
         Post.numberOfPosts = numberOfPosts;
+    }
+
+    public static int getNumberOfPosts() {
+        return numberOfPosts;
     }
 
     public int getId() {

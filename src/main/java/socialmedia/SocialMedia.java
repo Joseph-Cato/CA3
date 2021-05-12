@@ -1,6 +1,6 @@
 package socialmedia;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class SocialMedia implements SocialMediaPlatform {
@@ -620,19 +620,47 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public void erasePlatform() {
-        // TODO Auto-generated method stub
+        platform.eraseHashMaps();
+        platform.clearCounters();
 
     }
 
     @Override
     public void savePlatform(String filename) throws IOException {
-        // TODO Auto-generated method stub
+        try {
+            platform.saveCounters();
+
+            FileOutputStream fileOut = new FileOutputStream(filename);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(platform);
+            out.close();
+            fileOut.close();
+        } catch (IOException exception) {
+            throw new IOException();
+        }
+
 
     }
 
     @Override
     public void loadPlatform(String filename) throws IOException, ClassNotFoundException {
-        // TODO Auto-generated method stub
+        try {
+            FileInputStream fileIn = new FileInputStream(filename);
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            platform = (Platform) in.readObject();
+            in.close();
+            fileIn.close();
+
+            platform.loadCounters();
+
+        } catch (IOException i) {
+            i.printStackTrace();
+            throw new IOException();
+        } catch (ClassNotFoundException c) {
+            System.out.println("Platform class not found");
+            c.printStackTrace();
+            throw new ClassNotFoundException();
+        }
 
     }
 

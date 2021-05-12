@@ -15,6 +15,12 @@ public class Platform {
 
     private HashMap<Integer, Endorsement> endorsements = new HashMap<>();
 
+    private int numberOfAccounts;
+    private int numberOfPosts;
+    private int numberOfEndorsements;
+    private int numberOfComments;
+    private int numberOfOriginals;
+
 
     HashMap<String, Account> getAccounts() {
         return accounts;
@@ -61,6 +67,37 @@ public class Platform {
 
     HashMap<Integer, Endorsement> getEndorsements() {
         return endorsements;
+    }
+
+    void saveCounters() {
+        this.numberOfAccounts = Account.getNumberOfAccounts();
+        this.numberOfComments = Comment.getTotalNumberOfComments();
+        this.numberOfEndorsements = Endorsement.getNumberOfEndorsements();
+        this.numberOfOriginals = Original.getNumberOfPosts();
+        this.numberOfPosts = Post.getNumberOfPosts();
+    }
+
+    void loadCounters() {
+        Account.setNumberOfAccounts(this.numberOfAccounts);
+        Comment.setTotalNumberOfComments(this.numberOfComments);
+        Endorsement.setNumberOfEndorsements(this.numberOfEndorsements);
+        Original.setNumberOfOriginals(this.numberOfOriginals);
+        Post.setNumberOfPosts(this.numberOfPosts);
+    }
+
+    void eraseHashMaps() {
+        accounts.clear();
+        originals.clear();
+        comments.clear();
+        endorsements.clear();
+    }
+
+    void clearCounters() {
+        Account.setNumberOfAccounts(0);
+        Comment.setTotalNumberOfComments(0);
+        Endorsement.setNumberOfEndorsements(0);
+        Original.setNumberOfOriginals(0);
+        Post.setNumberOfPosts(0);
     }
 
     /**
