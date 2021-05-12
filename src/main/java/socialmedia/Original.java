@@ -92,4 +92,8 @@ public class Original extends Post {
 
         numberOfComments -= 1;
     }
+
+    public HashSet<Comment> getComments() {
+        return  comments;
+    }
 }

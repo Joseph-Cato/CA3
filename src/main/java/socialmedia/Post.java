@@ -1,18 +1,20 @@
 package socialmedia;
 
-public class Post {
+public class Post extends Object{
 
     private static int numberOfPosts = 0;
     private int id;
     private String handle;
-    public boolean actionable;
+    public boolean actionable; //TODO - this doesn't need to be public
+
 
     public Post(String handle) {
 
         this.handle = handle;
-        this.id = numberOfPosts;
 
         numberOfPosts += 1;
+
+        this.id = numberOfPosts;
 
     }
 

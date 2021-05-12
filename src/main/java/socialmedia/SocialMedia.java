@@ -469,14 +469,18 @@ public class SocialMedia implements SocialMediaPlatform {
     public StringBuilder showPostChildrenDetails(int id)
             throws PostIDNotRecognisedException, NotActionablePostException {
 
+        // String builder object that will be the final output of the function
+        StringBuilder finalOutput = new StringBuilder();
+
         // The post is assumed to be an original and retrieved
-        Post post = platform.getOriginals().get(id);
+        Original original = platform.getOriginals().get(id);
 
-        // If the object is null the post is assumed to be a comment and retrieved
-        if (post == null) {
-            post = platform.getComments().get(id);
+        // If the object is null the post is assumed to be a comment
+        if (original == null) {
+            Comment comment = platform.getComments().get(id);
 
-            if (post == null) {
+            // Checks if post is still null, implying it is an endorsement
+            if (comment == null) {
 
                 if (platform.getEndorsements().get(id) != null ) {
 
@@ -489,14 +493,96 @@ public class SocialMedia implements SocialMediaPlatform {
                 }
             }
 
+            //---------This part of the method will only run if the post is a comment---------
+
+            finalOutput.append(showIndividualPost(comment.getId()));
+
+            HashSet<Comment> comments = comment.getComments();
+
+            for (Comment i: comments) {
+                finalOutput.append(showPostChildrenDetails(i.getId(), 4));
+            }
+
+            return finalOutput;
+
         }
 
-        // Checks if post is actionable (False if it has been deleted)
-        if (!post.isActionable()) throw new NotActionablePostException();
+        //---------This part of the method will only run if the post is an original---------
+
+        // Checks if original is actionable (has not been deleted)
+        if (!original.isActionable()) throw new NotActionablePostException();
+
+        finalOutput.append(showIndividualPost(original.getId()));
+        finalOutput.append("|\n");
+
+        HashSet<Comment> commentsHashSet = original.getComments();
+
+        // List is sorted with CommentComparator object
+        ArrayList<Comment> commentsList = new ArrayList<>(commentsHashSet);
+        CommentComparator commentComparator = new CommentComparator();
+        Collections.sort(commentsList, commentComparator);
+
+        for (Comment i: commentsList) {
+            finalOutput.append(showPostChildrenDetails(i.getId(), 4));
+        }
+
+        return finalOutput;
 
 
-        return null;
+        //TODO - check if each post is actionable and catch the error in the recursive function
+
     }
+
+    public StringBuilder showPostChildrenDetails(int id, int spacing) throws NotActionablePostException, PostIDNotRecognisedException {
+
+        Comment comment = platform.getComments().get(id);
+
+        if (!comment.isActionable()) throw new NotActionablePostException();
+
+        StringBuilder output = new StringBuilder();
+
+        // String builders are created based for the indentation
+        StringBuilder firstIndentation = new StringBuilder();
+        for (int i = 0; i < spacing-4; i++) {
+            firstIndentation.append(" ");
+        }
+        firstIndentation.append("| > ");
+
+        StringBuilder secondaryIndentation = new StringBuilder();
+        for (int i = 0; i < spacing; i++) {
+            secondaryIndentation.append(" ");
+        }
+
+        String postDetails = showIndividualPost(id);
+        String[] splitPostDetails = postDetails.split("\n");
+
+        splitPostDetails[0] = firstIndentation + splitPostDetails[0];
+        for (int i=1; i< splitPostDetails.length; i++) {
+            splitPostDetails[i] = secondaryIndentation + splitPostDetails[i];
+        }
+
+        output.append(String.join("\n", splitPostDetails));
+
+        HashSet<Comment> commentsHashSet = comment.getComments();
+
+        if (!commentsHashSet.isEmpty()) {
+            output.append("\n" + secondaryIndentation + "|\n");
+        } else {
+            output.append("\n\n" );
+        }
+
+        // List is sorted with CommentComparator object
+        ArrayList<Comment> commentsList = new ArrayList<>(commentsHashSet);
+        CommentComparator commentComparator = new CommentComparator();
+        Collections.sort(commentsList, commentComparator);
+
+        for (Comment i: commentsList) {
+            output.append(showPostChildrenDetails(i.getId(), spacing+4));
+        }
+
+        return output;
+    }
+
 
     @Override
     public int getNumberOfAccounts() {
@@ -526,8 +612,8 @@ public class SocialMedia implements SocialMediaPlatform {
     @Override
     public int getMostEndorsedPost() {
 
-        Original original = platform.getOriginals().get(0);
-        Comment comment = platform.getComments().get(0);
+        Original original = platform.getOriginals().get(1);
+        Comment comment = platform.getComments().get(1);
 
         // If there is at least one original
         if (original != null) {
