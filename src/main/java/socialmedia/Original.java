@@ -126,14 +126,11 @@ public class Original extends Post {
         numberOfComments += 1;
     }
 
-//TODO - check these two and comment
-    public void removeComment(Comment comment) {
 
-        comments.add(comment);
-
-        numberOfComments -= 1;
-    }
-
+    /**
+     * Method the returns the HashSet of comments
+     * @return HashSet of comments
+     */
     public HashSet<Comment> getComments() {
         return  comments;
     }

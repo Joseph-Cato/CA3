@@ -5,11 +5,12 @@ package socialmedia;
  * The Post class. This is a superclass for {@link Original}, {@link Comment} and {@link Endorsement}.
  *
  * Contains static counter variable numberOfPosts that tracks the total number of Posts that have ever been made
- * Contains id, handle and actionable
+ * Contains id, handle, unique_id and actionable
  */
 public class Post {
 
     private static int numberOfPosts = 0;
+    private static int unique_id = 0;
     private final int ID;
     private String handle;
     private boolean actionable;
@@ -23,7 +24,8 @@ public class Post {
       
         this.handle = handle;
         numberOfPosts += 1;
-        this.ID = numberOfPosts;
+        unique_id += 1;
+        this.ID = unique_id;
 
     }
 
@@ -36,7 +38,10 @@ public class Post {
         numberOfPosts -= 1;
     }
 
-    //TODO - comment this
+    /**
+     * Sets the actionable boolean value
+     * @param actionable boolean value that determines whether a post is actionable
+     */
     public void setActionable(boolean actionable) {
         this.actionable = actionable;
     }
@@ -55,6 +60,7 @@ public class Post {
      */
     public static void setNumberOfPosts(int numberOfPosts) {
         Post.numberOfPosts = numberOfPosts;
+        Post.unique_id = numberOfPosts;
     }
 
     /**

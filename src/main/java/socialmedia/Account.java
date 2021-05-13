@@ -67,6 +67,14 @@ public class Account {
         totalPosts += 1;
     }
 
+    public HashSet<Comment> getComments() {
+        return comments;
+    }
+
+    public HashSet<Original> getOriginals() {
+        return originals;
+    }
+
     /**
      * Method that removes Comment from ArrayList of Comments associated with Account
      * @param comment Comment to be removed from the ArrayList
