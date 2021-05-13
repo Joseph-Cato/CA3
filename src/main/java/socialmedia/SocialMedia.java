@@ -66,17 +66,34 @@ public class SocialMedia implements SocialMediaPlatform {
     @Override
     public void removeAccount(int id) throws AccountIDNotRecognisedException {
 
-        // TODO Remove all types of posts associated with this account
-
         // Finds the account with the corresponding Id
         for (Account i : platform.getAccounts().values()) {
             if (i.getNUMERICAL_IDENTIFIER() == id) {
                 try {
+
+                    //Removes all posts associated with account
+
+                    HashSet<Endorsement> endorsementsHashSet = i.getEndorsements();
+                    HashSet<Comment> commentHashSet = i.getComments();
+                    HashSet<Original> originalHashSet = i.getOriginals();
+
+                    for (Endorsement j : endorsementsHashSet) {
+                        deletePost(j.getID());
+                    }
+
+                    for (Comment j : commentHashSet) {
+                        deletePost(j.getID());
+                    }
+
+                    for (Original j : originalHashSet) {
+                        deletePost(j.getID());
+                    }
+
                     // Removes that account using the other method
                     removeAccount(i.getHandle());
                     // Returns void if this if is evaluated as true (i.e the id is found)
                     return;
-                } catch (HandleNotRecognisedException e) {
+                } catch (HandleNotRecognisedException | PostIDNotRecognisedException e) {
                     e.printStackTrace();
                 }
             }
@@ -90,14 +107,38 @@ public class SocialMedia implements SocialMediaPlatform {
     @Override
     public void removeAccount(String handle) throws HandleNotRecognisedException {
 
-        // TODO Remove all types of posts associated with this account
+        try {
 
-        // Removes account from the HashMap accounts
-        Account account = platform.removeAccount(handle);
+            Account account1 = platform.getAccount(handle);
 
-        // if HashMap.removeAccount() returns null then the value was not found
-        // (no account with that handle exists)
-        if (account == null) throw new HandleNotRecognisedException();
+            // if HashMap.removeAccount() returns null then the value was not found
+            // (no account with that handle exists)
+            if (account1 == null) throw new HandleNotRecognisedException();
+
+            //Removes all posts associated with account
+
+            HashSet<Endorsement> endorsementsHashSet = account1.getEndorsements();
+            HashSet<Comment> commentHashSet = account1.getComments();
+            HashSet<Original> originalHashSet = account1.getOriginals();
+
+            for (Endorsement j : endorsementsHashSet) {
+                deletePost(j.getID());
+            }
+
+            for (Comment j : commentHashSet) {
+                deletePost(j.getID());
+            }
+
+            for (Original j : originalHashSet) {
+                deletePost(j.getID());
+            }
+
+            // Removes account from the HashMap accounts
+            Account account = platform.removeAccount(handle);
+
+        } catch (PostIDNotRecognisedException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -544,6 +585,7 @@ public class SocialMedia implements SocialMediaPlatform {
         CommentComparator commentComparator = new CommentComparator();
         commentsList.sort(commentComparator);
 
+
         for (Comment i: commentsList) {
             finalOutput.append(showPostChildrenDetails(i.getID(), 4));
             finalOutput.append("\n");
@@ -552,9 +594,6 @@ public class SocialMedia implements SocialMediaPlatform {
         finalOutput.deleteCharAt(finalOutput.length()-1);
 
         return finalOutput;
-
-
-        //TODO - check if each post is actionable and catch the error in the recursive function
 
     }
 

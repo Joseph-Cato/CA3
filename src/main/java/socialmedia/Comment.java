@@ -50,7 +50,11 @@ public class Comment extends Post {
         totalNumberOfComments += 1;
     }
 
-//TODO - comment this
+
+    /**
+     * Method that returns the HashSet of comments
+     * @return HashSet of comments
+     */
     public HashSet<Comment> getComments(){
         return comments;
     }
