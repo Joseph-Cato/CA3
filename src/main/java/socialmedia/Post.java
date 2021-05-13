@@ -39,9 +39,10 @@ public class Post {
     }
 
     /**
-     * Sets the actionable boolean value
-     * @param actionable boolean value that determines whether a post is actionable
-     */
+
+    * Method that sets whether Post is actionable or not
+    * @param actionable Boolean that determines whether Post is actionable
+    */
     public void setActionable(boolean actionable) {
         this.actionable = actionable;
     }
