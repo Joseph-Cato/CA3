@@ -1,6 +1,6 @@
 package socialmedia;
 
-public class Post extends Object{
+public class Post extends Object{ //TODO - i think extends Object is not needed, used it when trying to sort stuff
 
     private static int numberOfPosts = 0;
     private int id;
@@ -24,6 +24,10 @@ public class Post extends Object{
 
         numberOfPosts -= 1;
 
+    }
+
+    public static int getNumberOfPostsTestingFunc() {
+        return numberOfPosts;
     }
 
     public boolean isActionable() {

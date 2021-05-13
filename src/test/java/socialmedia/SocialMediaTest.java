@@ -922,8 +922,36 @@ public class SocialMediaTest {
     public void showPostChildrenDetailsTest() {
 
         try {
-            StringBuilder expectedOutputOne = new StringBuilder();
-            expectedOutputOne.append("""
+
+
+            SocialMedia sm = new SocialMedia();
+
+            sm.createAccount("user1");
+            sm.createAccount("user2");
+            sm.createAccount("user3");
+            sm.createAccount("user4");
+            sm.createAccount("user5");
+
+            sm.createPost("user1", "I like examples."); //1
+
+            sm.endorsePost("user2", 1); //2
+
+            sm.commentPost("user2", 1, "No more than me..."); //3
+            sm.commentPost("user3", 1, "Can't you do better than this?"); //4
+            sm.commentPost("user1", 3, "I can prove!"); //5
+            sm.commentPost("user2", 5, "prove it"); //6
+            sm.commentPost("user5", 1, "where is the example?"); //7
+
+            sm.endorsePost("user4", 1); //8
+            sm.endorsePost("user4", 4); //9
+
+            sm.commentPost("user1", 7, "This is the example!"); //10
+
+            sm.endorsePost("user1", 4); //11
+            sm.endorsePost("user2", 4); //12
+            sm.endorsePost("user3", 4); //13
+
+            String expectedOutputOne = """
                     ID: 1
                     Account: user1
                     No. endorsements: 2 | No. comments: 3
@@ -958,10 +986,10 @@ public class SocialMediaTest {
                             Account: user1
                             No. endorsements: 0 | No. comments: 0
                             This is the example!
-                    """);
+                    """;
+            Assert.assertEquals(expectedOutputOne, sm.showPostChildrenDetails(1).toString());
 
-            StringBuilder expectedOutputTwo = new StringBuilder();
-            expectedOutputTwo.append("""
+            String expectedOutputTwo = """
                     ID: 5
                     Account: user1
                     No. endorsements: 0 | No. comments: 1
@@ -971,38 +999,8 @@ public class SocialMediaTest {
                         Account: user2
                         No. endorsements: 0 | No. comments: 0
                         prove it
-                    """);
-
-
-            SocialMedia sm = new SocialMedia();
-
-            sm.createAccount("user1");
-            sm.createAccount("user2");
-            sm.createAccount("user3");
-            sm.createAccount("user4");
-            sm.createAccount("user5");
-
-            sm.createPost("user1", "I like examples."); //1
-            sm.endorsePost("user2", 1); //2
-            sm.commentPost("user2", 1, "No more than me..."); //3
-            sm.commentPost("user3", 1, "Can't you do better than this?"); //4
-            sm.commentPost("user1", 3, "I can prove!"); //5
-            sm.commentPost("user2", 5, "prove it"); //6
-            sm.commentPost("user5", 1, "where is the example?"); //7
-
-            sm.endorsePost("user4", 1); //8
-            sm.endorsePost("user4", 4); //9
-
-            sm.commentPost("user1", 7, "This is the example!"); //10
-
-            sm.endorsePost("user1", 4); //11
-            sm.endorsePost("user2", 4); //12
-            sm.endorsePost("user3", 4); //13
-
-
-            Assert.assertEquals(expectedOutputOne.toString(), sm.showPostChildrenDetails(1).toString());
-
-            Assert.assertEquals(expectedOutputTwo.toString(), sm.showPostChildrenDetails(7).toString());
+                    """;
+            Assert.assertEquals(expectedOutputTwo, sm.showPostChildrenDetails(7).toString());
 
         } catch (Exception e){
             e.printStackTrace();
@@ -1040,14 +1038,14 @@ public class SocialMediaTest {
             sm.createAccount("1");
             sm.createAccount("2");
 
-            sm.createPost("1", "yoooo"); //0
-            sm.endorsePost("2", 0); //1
+            sm.createPost("1", "yoooo"); //1
+            sm.endorsePost("2", 1); //2
+
+            Assert.assertThrows(NotActionablePostException.class, () -> sm.showPostChildrenDetails(2));
+
+            sm.deletePost(1);
 
             Assert.assertThrows(NotActionablePostException.class, () -> sm.showPostChildrenDetails(1));
-
-            sm.deletePost(0);
-
-            Assert.assertThrows(NotActionablePostException.class, () -> sm.showPostChildrenDetails(0));
 
         } catch (Exception e){
             e.printStackTrace();

@@ -179,6 +179,7 @@ public class SocialMedia implements SocialMediaPlatform {
     public int endorsePost(String handle, int id)
             throws HandleNotRecognisedException, PostIDNotRecognisedException, NotActionablePostException {
 
+
         // Checks if the user exists in the system, throws HandleNotRecognisedException otherwise
         if (platform.getAccount(handle) == null) throw new HandleNotRecognisedException();
 
@@ -436,7 +437,7 @@ public class SocialMedia implements SocialMediaPlatform {
                 Account: %s
                 No. endorsements: %o | No. comments: %o
                 %s
-                """, original.getId(), original.getHandle(), original.getNumberOfEndorsements(), original.getNumberOfComments(), original.getMessage());
+                """, /*original.getId()*/id, original.getHandle(), original.getNumberOfEndorsements(), original.getNumberOfComments(), original.getMessage());
         } else if (comment != null) {
 
             output = String.format("""
@@ -444,7 +445,7 @@ public class SocialMedia implements SocialMediaPlatform {
                 Account: %s
                 No. endorsements: %o | No. comments: %o
                 %s
-                """, comment.getId(), comment.getHandle(), comment.getNumberOfEndorsements(), comment.getNumberOfComments(), comment.getMessage());
+                """, /*comment.getId()*/id, comment.getHandle(), comment.getNumberOfEndorsements(), comment.getNumberOfComments(), comment.getMessage());
         } else if (endorsement != null) {
 
             //TODO - shouldn't an endorsement show a NotActionable exception???
@@ -454,7 +455,7 @@ public class SocialMedia implements SocialMediaPlatform {
                     Account: %s
                     No. endorsements: 0 | No. comments: 0
                     %s
-                    """, endorsement.getId(), endorsement.getHandle(), endorsement.getMessage());
+                    """, /*endorsement.getId()*/id, endorsement.getHandle(), endorsement.getMessage());
         } else {
 
             // if all objets are null the post has not been found in the system so a PostIDNotRecognisedException will be thrown
@@ -497,9 +498,14 @@ public class SocialMedia implements SocialMediaPlatform {
 
             finalOutput.append(showIndividualPost(comment.getId()));
 
-            HashSet<Comment> comments = comment.getComments();
+            HashSet<Comment> commentsHashSet = comment.getComments();
 
-            for (Comment i: comments) {
+            // List is sorted with CommentComparator object
+            ArrayList<Comment> commentsList = new ArrayList<>(commentsHashSet);
+            CommentComparator commentComparator = new CommentComparator();
+            commentsList.sort(commentComparator);
+
+            for (Comment i: commentsList) {
                 finalOutput.append(showPostChildrenDetails(i.getId(), 4));
             }
 
@@ -520,7 +526,7 @@ public class SocialMedia implements SocialMediaPlatform {
         // List is sorted with CommentComparator object
         ArrayList<Comment> commentsList = new ArrayList<>(commentsHashSet);
         CommentComparator commentComparator = new CommentComparator();
-        Collections.sort(commentsList, commentComparator);
+        commentsList.sort(commentComparator);
 
         for (Comment i: commentsList) {
             finalOutput.append(showPostChildrenDetails(i.getId(), 4));
@@ -542,20 +548,15 @@ public class SocialMedia implements SocialMediaPlatform {
         StringBuilder output = new StringBuilder();
 
         // String builders are created based for the indentation
-        StringBuilder firstIndentation = new StringBuilder();
-        for (int i = 0; i < spacing-4; i++) {
-            firstIndentation.append(" ");
-        }
-        firstIndentation.append("| > ");
 
         StringBuilder secondaryIndentation = new StringBuilder();
-        for (int i = 0; i < spacing; i++) {
-            secondaryIndentation.append(" ");
-        }
+        secondaryIndentation.append(" ".repeat(Math.max(0, spacing)));
 
         String postDetails = showIndividualPost(id);
         String[] splitPostDetails = postDetails.split("\n");
 
+        String firstIndentation = " ".repeat(Math.max(0, spacing - 4)) +
+                "| > ";
         splitPostDetails[0] = firstIndentation + splitPostDetails[0];
         for (int i=1; i< splitPostDetails.length; i++) {
             splitPostDetails[i] = secondaryIndentation + splitPostDetails[i];
@@ -566,7 +567,7 @@ public class SocialMedia implements SocialMediaPlatform {
         HashSet<Comment> commentsHashSet = comment.getComments();
 
         if (!commentsHashSet.isEmpty()) {
-            output.append("\n" + secondaryIndentation + "|\n");
+            output.append("\n").append(secondaryIndentation).append("|\n");
         } else {
             output.append("\n\n" );
         }
@@ -574,7 +575,7 @@ public class SocialMedia implements SocialMediaPlatform {
         // List is sorted with CommentComparator object
         ArrayList<Comment> commentsList = new ArrayList<>(commentsHashSet);
         CommentComparator commentComparator = new CommentComparator();
-        Collections.sort(commentsList, commentComparator);
+        commentsList.sort(commentComparator);
 
         for (Comment i: commentsList) {
             output.append(showPostChildrenDetails(i.getId(), spacing+4));

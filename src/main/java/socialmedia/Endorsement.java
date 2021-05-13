@@ -28,6 +28,8 @@ public class Endorsement extends Post {
 
         this.endorsedPost = endorsedPost;
         this.message = "EP@" + handle + ":" + endorsedPost.getMessage();
+
+        numberOfEndorsements += 1;
     }
 
     @Override
