@@ -1,16 +1,30 @@
 package socialmedia;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
+/**
+ * The SocialMedia backend. This program provides a backend solution to the ECM1410 OOP CA3 2021 problem.
+ *
+ * @author Adarsh Prusty
+ * @author Joseph Cato
+ * @version 1.0
+ * @since 13/05/2021
+ *
+ */
 public class SocialMedia implements SocialMediaPlatform {
 
     public Platform platform;
 
     public SocialMedia() {
+        /**
+         * Social Media method
+         * Generates a new, clean Platform object
+         */
 
         platform = new Platform();
 
+        // The below sets each counter in every relevant class to 0
         Endorsement.setNumberOfEndorsements(0);
 
         Post.setNumberOfPosts(0);
@@ -714,19 +728,50 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public void erasePlatform() {
-        // TODO Auto-generated method stub
+        // Calls various classes in Platform to erase the HashMaps and reset counters in other classes
+        platform.eraseHashMaps();
+        platform.clearCounters();
 
     }
 
     @Override
     public void savePlatform(String filename) throws IOException {
-        // TODO Auto-generated method stub
+        try {
+            platform.saveCounters(); // This calls a method that saves all counters to variables in platform
+
+            FileOutputStream fileOut = new FileOutputStream(filename); // Creates a new FOS using the filename
+            ObjectOutputStream out = new ObjectOutputStream(fileOut); // Creates an OOS to write objects to file
+            out.writeObject(platform); // Writes the object
+            // Below closes the OOS and FOS
+            out.close();
+            fileOut.close();
+        } catch (IOException exception) {
+            throw new IOException();
+        }
+
 
     }
 
     @Override
     public void loadPlatform(String filename) throws IOException, ClassNotFoundException {
-        // TODO Auto-generated method stub
+        try {
+            FileInputStream fileIn = new FileInputStream(filename); // Creates FIS using the filename
+            ObjectInputStream in = new ObjectInputStream(fileIn); // Creates an OIS to read objects from file
+            platform = (Platform) in.readObject(); // Reads the Platform object from file
+            // Below closes the OIS and FIS
+            in.close();
+            fileIn.close();
+
+            platform.loadCounters(); // This calls a method that loads all counters from variables in new platform
+
+        } catch (IOException i) {
+            i.printStackTrace();
+            throw new IOException();
+        } catch (ClassNotFoundException c) {
+            System.out.println("Platform class not found");
+            c.printStackTrace();
+            throw new ClassNotFoundException();
+        }
 
     }
 
