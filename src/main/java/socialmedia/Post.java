@@ -36,7 +36,10 @@ public class Post {
         numberOfPosts -= 1;
     }
 
-    //TODO - comment this
+    /**
+    * Method that sets whether Post is actionable or not
+    * @param actionable Boolean that determines whether Post is actionable
+    */
     public void setActionable(boolean actionable) {
         this.actionable = actionable;
     }
