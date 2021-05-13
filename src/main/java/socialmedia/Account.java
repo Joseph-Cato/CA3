@@ -67,10 +67,18 @@ public class Account {
         totalPosts += 1;
     }
 
+    /**
+    * Method that gets HashSet of Comments
+    * @return Returns HashSet of Comments
+    */
     public HashSet<Comment> getComments() {
         return comments;
     }
 
+    /**
+    * Method that gets HashSet of Originals
+    * @return Returns HashSet of Originals
+    */
     public HashSet<Original> getOriginals() {
         return originals;
     }
