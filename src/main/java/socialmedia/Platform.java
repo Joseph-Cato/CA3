@@ -1,6 +1,5 @@
 package socialmedia;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -11,13 +10,12 @@ import java.util.HashMap;
  */
 public class Platform {
 
-    //TODO - set hashmaps to bigger default size to increase efficiency
 
     // Below are HashMaps that store each Account, Original, Comment and Endorsement respectively
-    private HashMap<String, Account> accounts = new HashMap<>();
-    private HashMap<Integer, Original> originals = new HashMap<>();
-    private HashMap<Integer, Comment> comments = new HashMap<>();
-    private HashMap<Integer, Endorsement> endorsements = new HashMap<>();
+    private HashMap<String, Account> accounts = new HashMap<>(100);
+    private HashMap<Integer, Original> originals = new HashMap<>(100);
+    private HashMap<Integer, Comment> comments = new HashMap<>(100);
+    private HashMap<Integer, Endorsement> endorsements = new HashMap<>(100);
 
     // These variables hold the static counters from other classes and are not generally used during runtime
     private int numberOfAccounts;
@@ -67,7 +65,7 @@ public class Platform {
      * @param original The Original to be added
      */
     void addOriginal(Original original){
-        int id = original.getId(); // Gets ID of Account to be used as key
+        int id = original.getID(); // Gets ID of Account to be used as key
         originals.put(id, original);
     }
 
@@ -76,7 +74,7 @@ public class Platform {
      * @param comment The Comment to be added
      */
     void addComment(Comment comment) {
-        comments.put(comment.getId(), comment);
+        comments.put(comment.getID(), comment);
     }
 
     /**
@@ -84,7 +82,7 @@ public class Platform {
      * @param endorsement The Endorsement to be added
      */
     void addEndorsement(Endorsement endorsement) {
-        endorsements.put(endorsement.getId(), endorsement);
+        endorsements.put(endorsement.getID(), endorsement);
     }
 
     /**
@@ -92,7 +90,7 @@ public class Platform {
      * @param endorsement The Endorsement to be removed
      */
     void removeEndorsement(Endorsement endorsement) {
-        endorsements.remove(endorsement.getId(), endorsement);
+        endorsements.remove(endorsement.getID(), endorsement);
     }
 
     /**
@@ -166,7 +164,7 @@ public class Platform {
      *  Method used solely for testing.
      * @return HashMap of account handles and descriptions in the system.
      */
-    HashMap<String, String> printAccounts(){ //TODO - Learn how to properly test HashMaps instead of this horrible thing
+    HashMap<String, String> printAccounts(){
 
         HashMap<String, String> accountList = new HashMap<>();
 

@@ -1,8 +1,6 @@
 package socialmedia;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -132,8 +130,6 @@ public class SocialMediaTest {
 
     @Test
     public void removeAccountBadHandleTest() {
-
-        //TODO - check posts remain intact
 
         SocialMedia sm = new SocialMedia();
 
@@ -410,9 +406,9 @@ public class SocialMediaTest {
             Assert.assertEquals(o2.getHandle(), sm.platform.getOriginals().get(2).getHandle());
             Assert.assertEquals(o3.getHandle(), sm.platform.getOriginals().get(3).getHandle());
 
-            Assert.assertEquals(o1.getId(), sm.platform.getOriginals().get(1).getId());
-            Assert.assertEquals(o2.getId(), sm.platform.getOriginals().get(2).getId());
-            Assert.assertEquals(o3.getId(), sm.platform.getOriginals().get(3).getId());
+            Assert.assertEquals(o1.getID(), sm.platform.getOriginals().get(1).getID());
+            Assert.assertEquals(o2.getID(), sm.platform.getOriginals().get(2).getID());
+            Assert.assertEquals(o3.getID(), sm.platform.getOriginals().get(3).getID());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -471,7 +467,7 @@ public class SocialMediaTest {
             Assert.assertEquals( sm.platform.getEndorsements().get(2), actual);
 
             Assert.assertEquals( "Jimmy", actual.getHandle());
-            Assert.assertEquals( 2, actual.getId());
+            Assert.assertEquals( 2, actual.getID());
             Assert.assertEquals( "EP@Jimmy:Hi I'm ben!", actual.getMessage());
 
         } catch (Exception e) {
@@ -563,9 +559,9 @@ public class SocialMediaTest {
             Assert.assertEquals("1commentCommentDave", actualComment2.getMessage());
             Assert.assertEquals("1commentDave", actualComment3.getMessage());
 
-            Assert.assertEquals(sm.platform.getOriginals().get(1), actualComment1.getOriginalPost());
+            Assert.assertEquals(sm.platform.getOriginals().get(1), actualComment1.getORIGINAL_POST());
             Assert.assertEquals(sm.platform.getComments().get(2), actualComment2.getOriginalComment());
-            Assert.assertEquals(sm.platform.getOriginals().get(1), actualComment3.getOriginalPost());
+            Assert.assertEquals(sm.platform.getOriginals().get(1), actualComment3.getORIGINAL_POST());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -677,7 +673,7 @@ public class SocialMediaTest {
 
             Assert.assertEquals(false, deletedPost.isActionable());
 
-            Assert.assertEquals(deletedPost, comment.getOriginalPost());
+            Assert.assertEquals(deletedPost, comment.getORIGINAL_POST());
 
         } catch (Exception e) {
             e.printStackTrace();

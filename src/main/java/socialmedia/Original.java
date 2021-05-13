@@ -16,8 +16,8 @@ public class Original extends Post {
     private int numberOfComments = 0;
     private static int numberOfOriginals = 0;
 
-    private HashSet<Comment> comments = new HashSet<Comment>();
-    private HashSet<Endorsement> endorsements = new HashSet<Endorsement>();
+    private HashSet<Comment> comments = new HashSet<>();
+    private HashSet<Endorsement> endorsements = new HashSet<>();
 
     /**
      * Constructor method for Original object
@@ -26,7 +26,7 @@ public class Original extends Post {
      */
     public Original(String handle, String message) {
         super(handle); // Calls super constructor
-        actionable = true;
+        setActionable(true);
         this.message = message;
         numberOfOriginals += 1;
     }
@@ -78,7 +78,7 @@ public class Original extends Post {
 
         numberOfComments = 0;
 
-        actionable = false;
+        setActionable(false);
 
         numberOfOriginals -= 1;
     }

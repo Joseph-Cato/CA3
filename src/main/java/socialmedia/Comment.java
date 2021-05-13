@@ -1,6 +1,5 @@
 package socialmedia;
 
-import java.util.Comparator;
 import java.util.HashSet;
 
 /**
@@ -12,13 +11,13 @@ import java.util.HashSet;
  */
 public class Comment extends Post {
     private String message;
-    private Post originalPost;
+    private final Post ORIGINAL_POST;
     private int numberOfEndorsements;
     private int numberOfComments;
     private static int totalNumberOfComments = 0;
 
-    private HashSet<Comment> comments = new HashSet<Comment>();
-    private HashSet<Endorsement> endorsements = new HashSet<Endorsement>();
+    private HashSet<Comment> comments = new HashSet<>();
+    private HashSet<Endorsement> endorsements = new HashSet<>();
 
 
     /**
@@ -29,8 +28,8 @@ public class Comment extends Post {
      */
     public Comment(String handle, Original original, String message) {
         super(handle); // Super constructor called by default
-        actionable = true; // Comments are actionable by default
-        originalPost = original;
+        setActionable(true); // Comments are actionable by default
+        ORIGINAL_POST = original;
         this.message = message;
         totalNumberOfComments += 1;
     }
@@ -44,9 +43,9 @@ public class Comment extends Post {
     public Comment(String handle, Comment original, String message) {
         super(handle);
 
-        actionable = true;
+        setActionable(true);
 
-        originalPost = original;
+        ORIGINAL_POST = original;
         this.message = message;
         totalNumberOfComments += 1;
     }
@@ -77,8 +76,8 @@ public class Comment extends Post {
      * Method that returns Original Post
      * @return Returns Original Post that is being commented on
      */
-    public Original getOriginalPost() {
-        return (Original) originalPost;
+    public Original getORIGINAL_POST() {
+        return (Original) ORIGINAL_POST;
     }
 
     /**
@@ -86,7 +85,7 @@ public class Comment extends Post {
      * @return Returns Comment Post that is being commented on
      */
     public Comment getOriginalComment() {
-        return (Comment) originalPost;
+        return (Comment) ORIGINAL_POST;
     }
 
     /**
@@ -99,7 +98,7 @@ public class Comment extends Post {
 
         message = "The original content was removed from the system and is no longer available.";
 
-        actionable = false;
+        setActionable(false);
 
         numberOfComments = 0;
 

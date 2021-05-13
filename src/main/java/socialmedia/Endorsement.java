@@ -18,7 +18,7 @@ public class Endorsement extends Post {
      */
     public Endorsement(String handle, Original endorsedPost) {
         super(handle); // Calls Super Constructor
-        actionable = false;
+        setActionable(false);
         this.endorsedPost = endorsedPost;
         this.message = "EP@" + handle + ":" + endorsedPost.getMessage();
         numberOfEndorsements += 1;
@@ -31,7 +31,7 @@ public class Endorsement extends Post {
      */
     public Endorsement(String handle, Comment endorsedPost) {
         super(handle); // Calls Super Constructor
-        actionable = false;
+        setActionable(false);
         this.endorsedPost = endorsedPost;
         this.message = "EP@" + handle + ":" + endorsedPost.getMessage();
 

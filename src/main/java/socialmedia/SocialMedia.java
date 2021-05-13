@@ -16,11 +16,11 @@ public class SocialMedia implements SocialMediaPlatform {
 
     public Platform platform;
 
+    /**
+     * Social Media method
+     * Generates a new, clean Platform object
+     */
     public SocialMedia() {
-        /**
-         * Social Media method
-         * Generates a new, clean Platform object
-         */
 
         platform = new Platform();
 
@@ -185,7 +185,7 @@ public class SocialMedia implements SocialMediaPlatform {
         // Adds original to platform
         platform.addOriginal(original);
 
-        return original.getId();
+        return original.getID();
 
     }
 
@@ -253,7 +253,7 @@ public class SocialMedia implements SocialMediaPlatform {
         platform.addEndorsement(endorsement);
 
 
-        return endorsement.getId();
+        return endorsement.getID();
 
     }
 
@@ -315,7 +315,7 @@ public class SocialMedia implements SocialMediaPlatform {
         // Comment is added to platform
         platform.addComment(newComment);
 
-        return newComment.getId();
+        return newComment.getID();
     }
 
     @Override
@@ -396,8 +396,8 @@ public class SocialMedia implements SocialMediaPlatform {
         } else if (endorsement != null) {
 
             // Original is retrieved
-            Original endorsedOriginal = platform.getOriginals().get( endorsement.getEndorsedPost().getId() );
-            Comment endorsedComment = platform.getComments().get( endorsement.getEndorsedPost().getId() );
+            Original endorsedOriginal = platform.getOriginals().get( endorsement.getEndorsedPost().getID() );
+            Comment endorsedComment = platform.getComments().get( endorsement.getEndorsedPost().getID() );
 
             // The type of object will be tested and one removed from its numberOfEndorsements variable
             if (endorsedOriginal != null) {
@@ -451,7 +451,7 @@ public class SocialMedia implements SocialMediaPlatform {
                 Account: %s
                 No. endorsements: %d | No. comments: %d
                 %s
-                """, original.getId(), original.getHandle(), original.getNumberOfEndorsements(), original.getNumberOfComments(), original.getMessage());
+                """, original.getID(), original.getHandle(), original.getNumberOfEndorsements(), original.getNumberOfComments(), original.getMessage());
         } else if (comment != null) {
 
             output = String.format("""
@@ -459,17 +459,15 @@ public class SocialMedia implements SocialMediaPlatform {
                 Account: %s
                 No. endorsements: %d | No. comments: %d
                 %s
-                """, comment.getId(), comment.getHandle(), comment.getNumberOfEndorsements(), comment.getNumberOfComments(), comment.getMessage());
+                """, comment.getID(), comment.getHandle(), comment.getNumberOfEndorsements(), comment.getNumberOfComments(), comment.getMessage());
         } else if (endorsement != null) {
-
-            //TODO - shouldn't an endorsement show a NotActionable exception???
 
             output = String.format("""
                     ID: %d
                     Account: %s
                     No. endorsements: 0 | No. comments: 0
                     %s
-                    """, endorsement.getId(), endorsement.getHandle(), endorsement.getMessage());
+                    """, endorsement.getID(), endorsement.getHandle(), endorsement.getMessage());
         } else {
 
             // if all objets are null the post has not been found in the system so a PostIDNotRecognisedException will be thrown
@@ -510,7 +508,7 @@ public class SocialMedia implements SocialMediaPlatform {
 
             //---------This part of the method will only run if the post is a comment---------
 
-            finalOutput.append(showIndividualPost(comment.getId()));
+            finalOutput.append(showIndividualPost(comment.getID()));
             finalOutput.append("|\n");
 
             HashSet<Comment> commentsHashSet = comment.getComments();
@@ -521,7 +519,7 @@ public class SocialMedia implements SocialMediaPlatform {
             commentsList.sort(commentComparator);
 
             for (Comment i: commentsList) {
-                finalOutput.append(showPostChildrenDetails(i.getId(), 4));
+                finalOutput.append(showPostChildrenDetails(i.getID(), 4));
                 finalOutput.append("\n");
             }
 
@@ -536,7 +534,7 @@ public class SocialMedia implements SocialMediaPlatform {
         // Checks if original is actionable (has not been deleted)
         if (!original.isActionable()) throw new NotActionablePostException();
 
-        finalOutput.append(showIndividualPost(original.getId()));
+        finalOutput.append(showIndividualPost(original.getID()));
         finalOutput.append("|\n");
 
         HashSet<Comment> commentsHashSet = original.getComments();
@@ -547,7 +545,7 @@ public class SocialMedia implements SocialMediaPlatform {
         commentsList.sort(commentComparator);
 
         for (Comment i: commentsList) {
-            finalOutput.append(showPostChildrenDetails(i.getId(), 4));
+            finalOutput.append(showPostChildrenDetails(i.getID(), 4));
             finalOutput.append("\n");
         }
 
@@ -599,7 +597,7 @@ public class SocialMedia implements SocialMediaPlatform {
         commentsList.sort(commentComparator);
 
         for (Comment i: commentsList) {
-            output.append(showPostChildrenDetails(i.getId(), spacing+4));
+            output.append(showPostChildrenDetails(i.getID(), spacing+4));
         }
 
         return output;
@@ -668,16 +666,16 @@ public class SocialMedia implements SocialMediaPlatform {
         if (original == null && comment == null) {
             return 0;
         } else if (original != null && comment == null) {
-            return original.getId();
-        } else if (comment != null && original == null) {
-            return comment.getId();
+            return original.getID();
+        } else if (original == null) {
+            return comment.getID();
         }
 
         // The most endorsed out of comment and original will be returned
         if (original.getNumberOfEndorsements() > comment.getNumberOfEndorsements()) {
-            return original.getId();
+            return original.getID();
         } else {
-            return comment.getId();
+            return comment.getID();
         }
 
     }
@@ -699,31 +697,6 @@ public class SocialMedia implements SocialMediaPlatform {
         // The ID of the account with most endorsements is returned
         return mostEndorsedAccount.getValue().getNUMERICAL_IDENTIFIER();
 
-        /*
-        Account mostEndorsedAccount = (Account) platform.getAccounts().values().toArray()[0];
-
-        // If there are no accounts 0 will be returned
-        if (mostEndorsedAccount == null) return 0;
-
-        // All accounts will be checked
-        for (Account i : platform.getAccounts().values()) {
-
-            int totalEndorsements = 0;
-
-            // Each account will have all comments and originals checked and number of endorsements will be summed
-            for (Original j : i.getOriginals().stream().toList()) {
-
-                totalEndorsements += j.getNumberOfEndorsements();
-            }
-
-            for (Comment j : i.getComments().stream().toList()) {
-
-                totalEndorsements += j.getNumberOfEndorsements();
-            }
-
-            if (totalEndorsements > mostEndorsedAccount)
-        }
-        */
     }
 
     @Override

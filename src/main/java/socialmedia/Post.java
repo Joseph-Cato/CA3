@@ -10,9 +10,9 @@ package socialmedia;
 public class Post {
 
     private static int numberOfPosts = 0;
-    private int id;
+    private final int ID;
     private String handle;
-    public boolean actionable; //TODO - this doesn't need to be public
+    private boolean actionable;
 
 
     /**
@@ -23,26 +23,24 @@ public class Post {
       
         this.handle = handle;
         numberOfPosts += 1;
-        this.id = numberOfPosts;
+        this.ID = numberOfPosts;
 
     }
 
     /**
      * Method that 'deletes' a Post by setting handle to null.
-     * Also removes 1 from the numberOfPosts varible.
+     * Also removes 1 from the numberOfPosts variable.
      */
     public void deletePost() {
         handle = null;
         numberOfPosts -= 1;
     }
 
-
-   //TODO - comment here
-    public static int getNumberOfPostsTestingFunc() {
-        return numberOfPosts;
+    //TODO - comment this
+    public void setActionable(boolean actionable) {
+        this.actionable = actionable;
     }
 
-  
     /**
      * Method that returns whether the Post is actionable or not
      * @return Returns boolean that determines whether Post is actionable
@@ -71,8 +69,8 @@ public class Post {
      * Method that returns the Post's ID
      * @return Returns the int ID
      */
-    public int getId() {
-        return id;
+    public int getID() {
+        return ID;
     }
 
     /**
