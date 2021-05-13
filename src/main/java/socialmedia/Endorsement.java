@@ -13,6 +13,8 @@ public class Endorsement extends Post {
     public Endorsement(String handle, Original endorsedPost) {
         super(handle);
 
+        actionable = false;
+
         this.endorsedPost = endorsedPost;
         this.message = "EP@" + handle + ":" + endorsedPost.getMessage();
 
@@ -22,8 +24,12 @@ public class Endorsement extends Post {
     public Endorsement(String handle, Comment endorsedPost) {
         super(handle);
 
+        actionable = false;
+
         this.endorsedPost = endorsedPost;
         this.message = "EP@" + handle + ":" + endorsedPost.getMessage();
+
+        numberOfEndorsements += 1;
     }
 
     @Override
