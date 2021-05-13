@@ -34,6 +34,8 @@ public class Endorsement extends Post {
         actionable = false;
         this.endorsedPost = endorsedPost;
         this.message = "EP@" + handle + ":" + endorsedPost.getMessage();
+
+        numberOfEndorsements += 1;
     }
 
     /**

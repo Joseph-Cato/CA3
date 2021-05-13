@@ -1,5 +1,6 @@
 package socialmedia;
 
+
 /**
  * The Post class. This is a superclass for {@link Original}, {@link Comment} and {@link Endorsement}.
  *
@@ -7,29 +8,41 @@ package socialmedia;
  * Contains id, handle and actionable
  */
 public class Post {
+
     private static int numberOfPosts = 0;
     private int id;
     private String handle;
-    public boolean actionable;
+    public boolean actionable; //TODO - this doesn't need to be public
+
 
     /**
      * Constructor method for Post
      * @param handle A String that represents the Account that is to be associated with the Post
      */
     public Post(String handle) {
+      
         this.handle = handle;
-        this.id = numberOfPosts;
         numberOfPosts += 1;
+        this.id = numberOfPosts;
+
     }
 
     /**
-     * Method that 'deletes' a Post by setting handle to null
+     * Method that 'deletes' a Post by setting handle to null.
+     * Also removes 1 from the numberOfPosts varible.
      */
     public void deletePost() {
         handle = null;
         numberOfPosts -= 1;
     }
 
+
+   //TODO - comment here
+    public static int getNumberOfPostsTestingFunc() {
+        return numberOfPosts;
+    }
+
+  
     /**
      * Method that returns whether the Post is actionable or not
      * @return Returns boolean that determines whether Post is actionable

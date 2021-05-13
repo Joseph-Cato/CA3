@@ -336,17 +336,17 @@ public class SocialMediaTest {
 
             sm.createPost("1", "post 0");
 
-            sm.commentPost("1", 0, "post 1 (comment)");
+            sm.commentPost("1", 1, "post 1 (comment)");
 
-            sm.endorsePost("1", 0); // post 2
+            sm.endorsePost("1", 1); // post 2
 
-            sm.endorsePost("1", 1); // post 3
+            sm.endorsePost("1", 2); // post 3
 
             Account account = sm.platform.getAccount("1");
 
             Assert.assertEquals(expected1, sm.showAccount("1"));
 
-            sm.deletePost(1);
+            sm.deletePost(2);
 
             Assert.assertEquals(expected2, sm.showAccount("1"));
 
@@ -392,9 +392,9 @@ public class SocialMediaTest {
             sm.createPost("Jimmy", "I posted twice :)");
             sm.createPost("Dave", "nobody cares");
 
-            Assert.assertTrue(sm.platform.getOriginals().containsKey(0));
             Assert.assertTrue(sm.platform.getOriginals().containsKey(1));
             Assert.assertTrue(sm.platform.getOriginals().containsKey(2));
+            Assert.assertTrue(sm.platform.getOriginals().containsKey(3));
 
             Post.setNumberOfPosts(0);
 
@@ -402,17 +402,17 @@ public class SocialMediaTest {
             Original o2 = new Original("Jimmy", "I posted twice :)");
             Original o3 = new Original("Dave", "nobody cares");
 
-            Assert.assertEquals(o1.getMessage(), sm.platform.getOriginals().get(0).getMessage());
-            Assert.assertEquals(o2.getMessage(), sm.platform.getOriginals().get(1).getMessage());
-            Assert.assertEquals(o3.getMessage(), sm.platform.getOriginals().get(2).getMessage());
+            Assert.assertEquals(o1.getMessage(), sm.platform.getOriginals().get(1).getMessage());
+            Assert.assertEquals(o2.getMessage(), sm.platform.getOriginals().get(2).getMessage());
+            Assert.assertEquals(o3.getMessage(), sm.platform.getOriginals().get(3).getMessage());
 
-            Assert.assertEquals(o1.getHandle(), sm.platform.getOriginals().get(0).getHandle());
-            Assert.assertEquals(o2.getHandle(), sm.platform.getOriginals().get(1).getHandle());
-            Assert.assertEquals(o3.getHandle(), sm.platform.getOriginals().get(2).getHandle());
+            Assert.assertEquals(o1.getHandle(), sm.platform.getOriginals().get(1).getHandle());
+            Assert.assertEquals(o2.getHandle(), sm.platform.getOriginals().get(2).getHandle());
+            Assert.assertEquals(o3.getHandle(), sm.platform.getOriginals().get(3).getHandle());
 
-            Assert.assertEquals(o1.getId(), sm.platform.getOriginals().get(0).getId());
-            Assert.assertEquals(o2.getId(), sm.platform.getOriginals().get(1).getId());
-            Assert.assertEquals(o3.getId(), sm.platform.getOriginals().get(2).getId());
+            Assert.assertEquals(o1.getId(), sm.platform.getOriginals().get(1).getId());
+            Assert.assertEquals(o2.getId(), sm.platform.getOriginals().get(2).getId());
+            Assert.assertEquals(o3.getId(), sm.platform.getOriginals().get(3).getId());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -464,14 +464,14 @@ public class SocialMediaTest {
 
             sm.createPost("Ben", "Hi I'm ben!");
 
-            sm.endorsePost("Jimmy", 0);
+            sm.endorsePost("Jimmy", 1);
 
             Endorsement actual = (Endorsement) sm.platform.getAccount("Jimmy").getEndorsements().toArray()[0];
 
-            Assert.assertEquals( sm.platform.getEndorsements().get(1), actual);
+            Assert.assertEquals( sm.platform.getEndorsements().get(2), actual);
 
             Assert.assertEquals( "Jimmy", actual.getHandle());
-            Assert.assertEquals( 1, actual.getId());
+            Assert.assertEquals( 2, actual.getId());
             Assert.assertEquals( "EP@Jimmy:Hi I'm ben!", actual.getMessage());
 
         } catch (Exception e) {
@@ -489,7 +489,7 @@ public class SocialMediaTest {
 
             sm.createPost("John", "one");
 
-            Assert.assertThrows(HandleNotRecognisedException.class, () -> sm.endorsePost("Ben", 0));
+            Assert.assertThrows(HandleNotRecognisedException.class, () -> sm.endorsePost("Ben", 1));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -504,7 +504,7 @@ public class SocialMediaTest {
 
             sm.createAccount("Jim");
 
-            Assert.assertThrows(PostIDNotRecognisedException.class, () -> sm.endorsePost("Jim", 0));
+            Assert.assertThrows(PostIDNotRecognisedException.class, () -> sm.endorsePost("Jim", 1));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -525,9 +525,9 @@ public class SocialMediaTest {
 
             sm.createPost("Jim", "hi");
 
-            sm.endorsePost("Jess", 0);
+            sm.endorsePost("Jess", 1);
 
-            Assert.assertThrows(NotActionablePostException.class, () -> sm.endorsePost("Jim", 1));
+            Assert.assertThrows(NotActionablePostException.class, () -> sm.endorsePost("Jim", 2));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -549,23 +549,23 @@ public class SocialMediaTest {
 
             sm.createPost("ben", "1"); //0
 
-            sm.commentPost("ben", 0, "1commentBen"); //1
+            sm.commentPost("ben", 1, "1commentBen"); //1
 
-            sm.commentPost("dave", 1, "1commentCommentDave"); //2
+            sm.commentPost("dave", 2, "1commentCommentDave"); //2
 
-            sm.commentPost("dave", 0, "1commentDave"); //3
+            sm.commentPost("dave", 1, "1commentDave"); //3
 
-            Comment actualComment1 = sm.platform.getComments().get(1);
-            Comment actualComment2 = sm.platform.getComments().get(2);
-            Comment actualComment3 = sm.platform.getComments().get(3);
+            Comment actualComment1 = sm.platform.getComments().get(2);
+            Comment actualComment2 = sm.platform.getComments().get(3);
+            Comment actualComment3 = sm.platform.getComments().get(4);
 
             Assert.assertEquals("1commentBen", actualComment1.getMessage());
             Assert.assertEquals("1commentCommentDave", actualComment2.getMessage());
             Assert.assertEquals("1commentDave", actualComment3.getMessage());
 
-            Assert.assertEquals(sm.platform.getOriginals().get(0), actualComment1.getOriginalPost());
-            Assert.assertEquals(sm.platform.getComments().get(1), actualComment2.getOriginalComment());
-            Assert.assertEquals(sm.platform.getOriginals().get(0), actualComment3.getOriginalPost());
+            Assert.assertEquals(sm.platform.getOriginals().get(1), actualComment1.getOriginalPost());
+            Assert.assertEquals(sm.platform.getComments().get(2), actualComment2.getOriginalComment());
+            Assert.assertEquals(sm.platform.getOriginals().get(1), actualComment3.getOriginalPost());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -583,7 +583,7 @@ public class SocialMediaTest {
 
             sm.createPost("j", "j");
 
-            Assert.assertThrows(HandleNotRecognisedException.class, () -> sm.commentPost("daveyyyy", 0, "hi"));
+            Assert.assertThrows(HandleNotRecognisedException.class, () -> sm.commentPost("daveyyyy", 1, "hi"));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -601,7 +601,7 @@ public class SocialMediaTest {
 
             sm.createPost("bob", "hi");
 
-            Assert.assertThrows(PostIDNotRecognisedException.class, () -> sm.commentPost("bob", 5, "hi"));
+            Assert.assertThrows(PostIDNotRecognisedException.class, () -> sm.commentPost("bob", 6, "hi"));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -620,9 +620,9 @@ public class SocialMediaTest {
 
             sm.createPost("billy", " qawdilhyv"); //0
 
-            sm.endorsePost("Jess", 0); //1
+            sm.endorsePost("Jess", 1); //1
 
-            Assert.assertThrows(NotActionablePostException.class, () -> sm.commentPost("billy", 1, "this won't work!"));
+            Assert.assertThrows(NotActionablePostException.class, () -> sm.commentPost("billy", 2, "this won't work!"));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -640,9 +640,9 @@ public class SocialMediaTest {
 
             sm.createPost("Joe", "hi");
 
-            Assert.assertThrows(InvalidPostException.class, () -> sm.commentPost("Joe", 0, ""));
+            Assert.assertThrows(InvalidPostException.class, () -> sm.commentPost("Joe", 1, ""));
 
-            Assert.assertThrows(InvalidPostException.class, () -> sm.commentPost("Joe", 0, "seFAWRFWETRHGEWN FKLUJIHAWEFRAWERGAERGesrfgsetjn0o87y4hg23498762rbouygbf9874362gbfkuwe3yg245    52t 3"));
+            Assert.assertThrows(InvalidPostException.class, () -> sm.commentPost("Joe", 1, "seFAWRFWETRHGEWN FKLUJIHAWEFRAWERGAERGesrfgsetjn0o87y4hg23498762rbouygbf9874362gbfkuwe3yg245    52t 3"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -661,14 +661,14 @@ public class SocialMediaTest {
 
             sm.createPost("ben", "hi");
 
-            sm.commentPost("james", 0, "hello");
+            sm.commentPost("james", 1, "hello");
 
-            sm.deletePost(0);
+            sm.deletePost(1);
 
 
-            Original deletedPost = sm.platform.getOriginals().get(0);
+            Original deletedPost = sm.platform.getOriginals().get(1);
 
-            Comment comment = sm.platform.getComments().get(1);
+            Comment comment = sm.platform.getComments().get(2);
 
 
             Assert.assertEquals(null, deletedPost.getHandle());
@@ -695,7 +695,7 @@ public class SocialMediaTest {
 
             sm.createPost("ben", "hi"); //0
 
-            Assert.assertThrows(PostIDNotRecognisedException.class, () -> sm.deletePost(2));
+            Assert.assertThrows(PostIDNotRecognisedException.class, () -> sm.deletePost(3));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -715,30 +715,30 @@ public class SocialMediaTest {
 
             sm.createPost("ben", "one"); //0
 
-            sm.commentPost("ben", 0, "two"); //1
+            sm.commentPost("ben", 1, "two"); //1
 
-            sm.endorsePost("jim", 1); //2
+            sm.endorsePost("jim", 2); //2
 
-            sm.endorsePost("bob", 1);
+            sm.endorsePost("bob", 2);
 
             String expected1 = """
-                    ID: 0
+                    ID: 1
                     Account: ben
                     No. endorsements: 0 | No. comments: 1
                     one
                     """;
 
             String expected2 = """
-                    ID: 1
+                    ID: 2
                     Account: ben
                     No. endorsements: 2 | No. comments: 0
                     two
                     """;
 
 
-            Assert.assertEquals(expected1, sm.showIndividualPost(0));
+            Assert.assertEquals(expected1, sm.showIndividualPost(1));
 
-            Assert.assertEquals(expected2, sm.showIndividualPost(1));
+            Assert.assertEquals(expected2, sm.showIndividualPost(2));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -757,7 +757,7 @@ public class SocialMediaTest {
             sm.createPost("ben", "test00");
 
 
-            Assert.assertThrows(PostIDNotRecognisedException.class, () -> sm.deletePost(1));
+            Assert.assertThrows(PostIDNotRecognisedException.class, () -> sm.deletePost(2));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -800,7 +800,7 @@ public class SocialMediaTest {
 
             Assert.assertEquals(6, sm.getTotalOriginalPosts());
 
-            sm.deletePost(3);
+            sm.deletePost(4);
 
             Assert.assertEquals(5, sm.getTotalOriginalPosts());
         } catch (Exception e) {
@@ -821,12 +821,12 @@ public class SocialMediaTest {
 
             sm.createPost("1", "1");
 
-            sm.endorsePost("2", 0);
-            sm.endorsePost("3", 0);
+            sm.endorsePost("2", 1);
+            sm.endorsePost("3", 1);
 
             Assert.assertEquals(2, sm.getTotalEndorsmentPosts());
 
-            sm.deletePost(2);
+            sm.deletePost(3);
 
             Assert.assertEquals(1, sm.getTotalEndorsmentPosts());
 
@@ -847,13 +847,13 @@ public class SocialMediaTest {
 
             sm.createPost("1", "0");
 
-            sm.commentPost("1", 0, "1");
-            sm.commentPost("2", 0, "2");
-            sm.commentPost("1", 2, "3");
+            sm.commentPost("1", 1, "1");
+            sm.commentPost("2", 1, "2");
+            sm.commentPost("1", 3, "3");
 
             Assert.assertEquals(3, sm.getTotalCommentPosts());
 
-            sm.deletePost(2);
+            sm.deletePost(3);
 
             Assert.assertEquals(2, sm.getTotalCommentPosts());
 
@@ -873,14 +873,14 @@ public class SocialMediaTest {
             sm.createAccount("2");
             sm.createAccount("3");
 
-            sm.createPost("1", "0");
-            sm.createPost("2", "1");
+            sm.createPost("1", "0"); //1
+            sm.createPost("2", "1"); //2
 
-            sm.endorsePost("1", 0);
-            sm.endorsePost("2", 1);
-            sm.endorsePost("3", 1);
+            sm.endorsePost("1", 1);
+            sm.endorsePost("2", 2);
+            sm.endorsePost("3", 2);
 
-            Assert.assertEquals(1, sm.getMostEndorsedPost());
+            Assert.assertEquals(2, sm.getMostEndorsedPost());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -901,15 +901,15 @@ public class SocialMediaTest {
             sm.createPost("0", "0"); // post id 0
             sm.createPost("1", "1"); // post id 1
 
-            sm.endorsePost("0", 1); // post id 2
+            sm.endorsePost("0", 2); // post id 2
 
-            sm.endorsePost("1", 0); // post id 3
-            sm.endorsePost("2", 0); // post id 4
+            sm.endorsePost("1", 1); // post id 3
+            sm.endorsePost("2", 1); // post id 4
 
             Assert.assertEquals(0, sm.getMostEndorsedAccount());
 
-            sm.deletePost(3);
             sm.deletePost(4);
+            sm.deletePost(5);
 
             Assert.assertEquals(1, sm.getMostEndorsedAccount());
 
@@ -922,55 +922,6 @@ public class SocialMediaTest {
     public void showPostChildrenDetailsTest() {
 
         try {
-            StringBuilder expectedOutputOne = new StringBuilder();
-            expectedOutputOne.append("""
-                    ID: 1
-                    Account: user1
-                    No. endorsements: 2 | No. comments: 3
-                    I like examples.
-                    |
-                    | > ID: 3
-                        Account: user2
-                        No. endorsements 0 | No. comments: 1
-                        No more than me...
-                        |
-                        | > ID: 5
-                            Account: user1
-                            No. endorsements: 0 | No. comments: 1
-                            I can prove!
-                            |
-                            | > ID: 6
-                                Account: user2
-                                No. endorsements: 0 | No. comments: 0
-                                prove it
-                    | > ID: 4
-                        Account: user3
-                        No. endorsements: 4 | no. comments: 0
-                        Can't you do better than this?
-                        
-                    | > ID: 7
-                        Account: user5
-                        No. endorsements: 0 | No. comments: 1
-                        where is the example?
-                        |
-                        | > ID: 10
-                            Account: user1
-                            No. endorsements: 0 | No.comments: 0
-                            This is the example!
-                    """);
-
-            StringBuilder expectedOutputTwo = new StringBuilder();
-            expectedOutputTwo.append("""
-                    ID: 5
-                    Account: user1
-                    No. endorsements: 0 | No. comments: 1
-                    I can prove!
-                    |
-                    | > ID: 6
-                        Account: user2
-                        No. endorsements: 0 | No. comments: 0
-                        prove it
-                    """);
 
 
             SocialMedia sm = new SocialMedia();
@@ -982,27 +933,74 @@ public class SocialMediaTest {
             sm.createAccount("user5");
 
             sm.createPost("user1", "I like examples."); //1
-            sm.endorsePost("user2", 0); //2
-            sm.commentPost("user2", 0, "No more than me..."); //3
-            sm.commentPost("user3", 0, "Can't you do better than this?"); //4
-            sm.commentPost("user1", 2, "I can prove!"); //5
-            sm.commentPost("user2", 4, "prove it"); //6
-            sm.commentPost("user5", 0, "where is the example?"); //7
 
-            sm.endorsePost("user4", 0); //8
-            sm.endorsePost("user4", 3); //9
+            sm.endorsePost("user2", 1); //2
 
-            sm.commentPost("user1", 6, "This is the example!"); //10
+            sm.commentPost("user2", 1, "No more than me..."); //3
+            sm.commentPost("user3", 1, "Can't you do better than this?"); //4
+            sm.commentPost("user1", 3, "I can prove!"); //5
+            sm.commentPost("user2", 5, "prove it"); //6
+            sm.commentPost("user5", 1, "where is the example?"); //7
 
-            sm.endorsePost("user1", 3); //11
-            sm.endorsePost("user2", 3); //12
-            sm.endorsePost("user3", 3); //13
+            sm.endorsePost("user4", 1); //8
+            sm.endorsePost("user4", 4); //9
 
-            System.out.println(sm.showPostChildrenDetails(0));
+            sm.commentPost("user1", 7, "This is the example!"); //10
 
-            Assert.assertEquals(expectedOutputOne.toString(), sm.showPostChildrenDetails(0).toString());
+            sm.endorsePost("user1", 4); //11
+            sm.endorsePost("user2", 4); //12
+            sm.endorsePost("user3", 4); //13
 
-            Assert.assertEquals(expectedOutputTwo.toString(), sm.showPostChildrenDetails(6).toString());
+            String expectedOutputOne = """
+                    ID: 1
+                    Account: user1
+                    No. endorsements: 2 | No. comments: 3
+                    I like examples.
+                    |
+                    | > ID: 3
+                        Account: user2
+                        No. endorsements: 0 | No. comments: 1
+                        No more than me...
+                        |
+                        | > ID: 5
+                            Account: user1
+                            No. endorsements: 0 | No. comments: 1
+                            I can prove!
+                            |
+                            | > ID: 6
+                                Account: user2
+                                No. endorsements: 0 | No. comments: 0
+                                prove it
+                                
+                    | > ID: 4
+                        Account: user3
+                        No. endorsements: 4 | No. comments: 0
+                        Can't you do better than this?
+                        
+                    | > ID: 7
+                        Account: user5
+                        No. endorsements: 0 | No. comments: 1
+                        where is the example?
+                        |
+                        | > ID: 10
+                            Account: user1
+                            No. endorsements: 0 | No. comments: 0
+                            This is the example!
+                    """;
+            Assert.assertEquals(expectedOutputOne, sm.showPostChildrenDetails(1).toString());
+
+            String expectedOutputTwo = """
+                    ID: 5
+                    Account: user1
+                    No. endorsements: 0 | No. comments: 1
+                    I can prove!
+                    |
+                    | > ID: 6
+                        Account: user2
+                        No. endorsements: 0 | No. comments: 0
+                        prove it
+                    """;
+            Assert.assertEquals(expectedOutputTwo, sm.showPostChildrenDetails(5).toString());
 
         } catch (Exception e){
             e.printStackTrace();
@@ -1021,7 +1019,7 @@ public class SocialMediaTest {
 
             sm.createPost("1", "yoooo");
 
-            Assert.assertThrows(PostIDNotRecognisedException.class, () -> sm.showPostChildrenDetails(1));
+            Assert.assertThrows(PostIDNotRecognisedException.class, () -> sm.showPostChildrenDetails(3));
             Assert.assertThrows(PostIDNotRecognisedException.class, () -> sm.showPostChildrenDetails(-2));
 
         } catch (Exception e){
@@ -1040,14 +1038,14 @@ public class SocialMediaTest {
             sm.createAccount("1");
             sm.createAccount("2");
 
-            sm.createPost("1", "yoooo"); //0
-            sm.endorsePost("2", 0); //1
+            sm.createPost("1", "yoooo"); //1
+            sm.endorsePost("2", 1); //2
+
+            Assert.assertThrows(NotActionablePostException.class, () -> sm.showPostChildrenDetails(2));
+
+            sm.deletePost(1);
 
             Assert.assertThrows(NotActionablePostException.class, () -> sm.showPostChildrenDetails(1));
-
-            sm.deletePost(0);
-
-            Assert.assertThrows(NotActionablePostException.class, () -> sm.showPostChildrenDetails(0));
 
         } catch (Exception e){
             e.printStackTrace();

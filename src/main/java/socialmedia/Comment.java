@@ -1,5 +1,6 @@
 package socialmedia;
 
+import java.util.Comparator;
 import java.util.HashSet;
 
 /**
@@ -18,6 +19,7 @@ public class Comment extends Post {
 
     private HashSet<Comment> comments = new HashSet<Comment>();
     private HashSet<Endorsement> endorsements = new HashSet<Endorsement>();
+
 
     /**
      * Constructor method for Comment object
@@ -41,10 +43,19 @@ public class Comment extends Post {
      */
     public Comment(String handle, Comment original, String message) {
         super(handle);
+
+        actionable = true;
+
         originalPost = original;
         this.message = message;
         totalNumberOfComments += 1;
     }
+
+//TODO - comment this
+    public HashSet<Comment> getComments(){
+        return comments;
+    }
+
 
     /**
      * Method that sets numberOfOriginals to a certain value
