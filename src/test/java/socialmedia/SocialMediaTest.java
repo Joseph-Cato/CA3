@@ -1000,7 +1000,7 @@ public class SocialMediaTest {
                         No. endorsements: 0 | No. comments: 0
                         prove it
                     """;
-            Assert.assertEquals(expectedOutputTwo, sm.showPostChildrenDetails(7).toString());
+            Assert.assertEquals(expectedOutputTwo, sm.showPostChildrenDetails(5).toString());
 
         } catch (Exception e){
             e.printStackTrace();

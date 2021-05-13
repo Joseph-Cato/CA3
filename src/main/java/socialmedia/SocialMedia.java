@@ -433,29 +433,29 @@ public class SocialMedia implements SocialMediaPlatform {
         if (original != null) {
 
             output = String.format("""
-                ID: %o
+                ID: %d
                 Account: %s
-                No. endorsements: %o | No. comments: %o
+                No. endorsements: %d | No. comments: %d
                 %s
-                """, /*original.getId()*/id, original.getHandle(), original.getNumberOfEndorsements(), original.getNumberOfComments(), original.getMessage());
+                """, original.getId(), original.getHandle(), original.getNumberOfEndorsements(), original.getNumberOfComments(), original.getMessage());
         } else if (comment != null) {
 
             output = String.format("""
-                ID: %o
+                ID: %d
                 Account: %s
-                No. endorsements: %o | No. comments: %o
+                No. endorsements: %d | No. comments: %d
                 %s
-                """, /*comment.getId()*/id, comment.getHandle(), comment.getNumberOfEndorsements(), comment.getNumberOfComments(), comment.getMessage());
+                """, comment.getId(), comment.getHandle(), comment.getNumberOfEndorsements(), comment.getNumberOfComments(), comment.getMessage());
         } else if (endorsement != null) {
 
             //TODO - shouldn't an endorsement show a NotActionable exception???
 
             output = String.format("""
-                    ID: %o
+                    ID: %d
                     Account: %s
                     No. endorsements: 0 | No. comments: 0
                     %s
-                    """, /*endorsement.getId()*/id, endorsement.getHandle(), endorsement.getMessage());
+                    """, endorsement.getId(), endorsement.getHandle(), endorsement.getMessage());
         } else {
 
             // if all objets are null the post has not been found in the system so a PostIDNotRecognisedException will be thrown
@@ -497,6 +497,7 @@ public class SocialMedia implements SocialMediaPlatform {
             //---------This part of the method will only run if the post is a comment---------
 
             finalOutput.append(showIndividualPost(comment.getId()));
+            finalOutput.append("|\n");
 
             HashSet<Comment> commentsHashSet = comment.getComments();
 
@@ -507,7 +508,10 @@ public class SocialMedia implements SocialMediaPlatform {
 
             for (Comment i: commentsList) {
                 finalOutput.append(showPostChildrenDetails(i.getId(), 4));
+                finalOutput.append("\n");
             }
+
+            finalOutput.deleteCharAt(finalOutput.length()-1);
 
             return finalOutput;
 
@@ -530,7 +534,10 @@ public class SocialMedia implements SocialMediaPlatform {
 
         for (Comment i: commentsList) {
             finalOutput.append(showPostChildrenDetails(i.getId(), 4));
+            finalOutput.append("\n");
         }
+
+        finalOutput.deleteCharAt(finalOutput.length()-1);
 
         return finalOutput;
 
@@ -569,7 +576,7 @@ public class SocialMedia implements SocialMediaPlatform {
         if (!commentsHashSet.isEmpty()) {
             output.append("\n").append(secondaryIndentation).append("|\n");
         } else {
-            output.append("\n\n" );
+            output.append("\n" );
         }
 
         // List is sorted with CommentComparator object
